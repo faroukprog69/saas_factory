@@ -32,4 +32,4 @@ jobs:
           publish: pnpm publish -r
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.YOUR_PAT_SECRET }}
+          GITHUB_TOKEN: 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
