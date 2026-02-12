@@ -11,11 +11,11 @@
   },
   "iconLibrary": "hugeicons",
   "aliases": {
-    "components": "@faroukarar/ui/components",
-    "utils": "@faroukarar/ui/lib/utils",
-    "hooks": "@faroukarar/ui/hooks",
-    "lib": "@faroukarar/ui/lib",
-    "ui": "@faroukarar/ui/components"
+    "components": "@faroukprog69/ui/components",
+    "utils": "@faroukprog69/ui/lib/utils",
+    "hooks": "@faroukprog69/ui/hooks",
+    "lib": "@faroukprog69/ui/lib",
+    "ui": "@faroukprog69/ui/components"
   },
   "menuColor": "default",
   "menuAccent": "subtle",

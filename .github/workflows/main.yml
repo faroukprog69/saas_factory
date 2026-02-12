@@ -11,17 +11,29 @@ jobs:
     permissions:
       contents: read
       packages: write
+
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 9
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          registry-url: "https://npm.pkg.github.com/"
+          node-version: 24
+          registry-url: https://npm.pkg.github.com/
+          cache: "pnpm"
 
       - run: pnpm install
-      - run: pnpm -r publish --no-git-checks
+
+      - run: |
+          for dir in packages/*; do
+            if [ -f "$dir/package.json" ]; then
+              echo "Publishing package in $dir"
+              cd $dir
+              pnpm publish --no-git-checks
+              cd -
+            fi
+          done
         env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

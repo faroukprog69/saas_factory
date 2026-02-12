@@ -1,10 +1,10 @@
 {
-  "extends": "@faroukarar/typescript-config/nextjs.json",
+  "extends": "@faroukprog69/typescript-config/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "@faroukarar/ui/*": ["../../packages/ui/src/*"]
+      "@faroukprog69/ui/*": ["../../packages/ui/src/*"]
     },
     "plugins": [
       {

@@ -7,11 +7,6 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/faroukarar/saas_factory1.git",
-    "directory": "packages/audit"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

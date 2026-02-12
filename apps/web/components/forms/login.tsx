@@ -1,19 +1,19 @@
-import { cn } from "@faroukarar/ui/lib/utils";
-import { Button } from "@faroukarar/ui/components/button";
+import { cn } from "@faroukprog69/ui/lib/utils";
+import { Button } from "@faroukprog69/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@faroukarar/ui/components/card";
+} from "@faroukprog69/ui/components/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
-} from "@faroukarar/ui/components/field";
+} from "@faroukprog69/ui/components/field";
 import React from "react";
-import { authClient } from "@faroukarar/auth";
+import { authClient } from "@faroukprog69/auth";
 
 export function LoginForm({
   className,

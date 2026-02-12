@@ -1,11 +1,11 @@
 {
-  "name": "@faroukarar/teams",
+  "name": "@faroukprog69/teams",
   "version": "0.0.0",
   "exports": {
     ".": "./src/index.ts"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@faroukarar"
+    "registry": "https://npm.pkg.github.com/@faroukprog69"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

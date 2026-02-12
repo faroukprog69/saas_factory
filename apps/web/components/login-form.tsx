@@ -1,20 +1,20 @@
-import { cn } from "@faroukarar/ui/lib/utils";
-import { Button } from "@faroukarar/ui/components/button";
+import { cn } from "@faroukprog69/ui/lib/utils";
+import { Button } from "@faroukprog69/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@faroukarar/ui/components/card";
+} from "@faroukprog69/ui/components/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@faroukarar/ui/components/field";
-import { Input } from "@faroukarar/ui/components/input";
+} from "@faroukprog69/ui/components/field";
+import { Input } from "@faroukprog69/ui/components/input";
 
 export function LoginForm({
   className,

@@ -1,3 +1,3 @@
-# `@faroukarar/typescript-config`
+# `@faroukprog69/typescript-config`
 
 Shared typescript configuration for the workspace.

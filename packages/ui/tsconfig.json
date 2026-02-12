@@ -5,7 +5,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@faroukarar/ui/*": ["./src/*"]
+      "@faroukprog69/ui/*": ["./src/*"]
     }
   },
   "include": ["."],

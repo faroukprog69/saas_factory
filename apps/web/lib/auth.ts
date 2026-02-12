@@ -1,2 +1,2 @@
-import { auth } from "@faroukarar/auth";
+import { auth } from "@faroukprog69/auth";
 export { auth };

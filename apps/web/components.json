@@ -14,8 +14,8 @@
     "components": "@/components",
     "hooks": "@/hooks",
     "lib": "@/lib",
-    "utils": "@faroukarar/ui/lib/utils",
-    "ui": "@faroukarar/ui/components"
+    "utils": "@faroukprog69/ui/lib/utils",
+    "ui": "@faroukprog69/ui/components"
   },
   "menuColor": "default",
   "menuAccent": "subtle",
