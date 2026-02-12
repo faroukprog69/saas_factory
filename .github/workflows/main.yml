@@ -1,4 +1,4 @@
-name: Node.js Package
+name: Release Packages
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
       - main
 
 jobs:
-  publish-gpr:
+  release:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -25,15 +25,9 @@ jobs:
           cache: "pnpm"
 
       - run: pnpm install
-
-      - run: |
-          for dir in packages/*; do
-            if [ -f "$dir/package.json" ]; then
-              echo "Publishing package in $dir"
-              cd $dir
-              pnpm publish --no-git-checks
-              cd -
-            fi
-          done
+      - name: Create Release
+        uses: changesets/action@v1
+        with:
+          publish: pnpm publish -r
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
