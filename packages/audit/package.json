@@ -18,7 +18,7 @@
     "registry": "https://npm.pkg.github.com/@faroukprog69"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --watch --dts",
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean --minify",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

@@ -2,24 +2,19 @@
   "name": "@faroukprog69/ui",
   "version": "0.0.0",
   "scripts": {
-    "build": "tsup src/ --format cjs,esm --dts --clean --minify && mkdir -p dist/styles && cp src/styles/globals.css dist/styles/",
+    "build": "tsup src/index.ts src/components/*.tsx src/hooks/*.ts src/lib/*.ts --format cjs,esm --dts --clean --minify && shx mkdir -p dist/styles && shx cp src/styles/globals.css dist/styles/globals.css",
     "lint": "eslint . --max-warnings 0"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@faroukprog69"
+    "registry": "https://npm.pkg.github.com"
   },
-  "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    },
     "./globals.css": "./dist/styles/globals.css",
     "./components/*": {
       "types": "./dist/components/*.d.ts",
@@ -54,6 +49,8 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "tsup": "^8.3.6",
+    "shx": "^0.3.4",
     "@tailwindcss/postcss": "^4.1.18",
     "@turbo/gen": "^2.8.1",
     "@types/node": "^25.1.0",

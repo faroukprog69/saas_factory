@@ -8,4 +8,4 @@
 "@faroukprog69/db": patch
 ---
 
-add very fast release
+Initial release

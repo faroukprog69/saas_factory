@@ -30,7 +30,7 @@ jobs:
       - name: Create Release
         uses: changesets/action@v1
         with:
-          publish: pnpm publish -r
+          publish: pnpm changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: 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
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
