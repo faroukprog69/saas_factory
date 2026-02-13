@@ -13,7 +13,7 @@ import {
   FieldGroup,
 } from "@faroukprog69/ui/components/field";
 import React from "react";
-import { authClient } from "@faroukprog69/auth";
+import { authClient } from "@/lib/authClient";
 
 export function LoginForm({
   className,
@@ -23,9 +23,10 @@ export function LoginForm({
 
   const handleGoogleLogin = () => {
     const signIn = async () => {
-      await authClient.signIn.social({
+      const result = await authClient.signIn.social({
         provider: "google",
       });
+      console.log(result);
     };
 
     startTransition(signIn);
