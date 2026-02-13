@@ -38,20 +38,6 @@ export const AuditActors: AuditActorType[] = ["user", "system", "api"];
 export type AuditEntityType = string;
 export type AuditTargetType = string;
 
-export interface LogAuditParams {
-  actorId?: string;
-  actorType: AuditActorType;
-  entityType: AuditEntityType;
-  entityId?: string;
-  action: AuditAction;
-  targetId?: string;
-  targetType?: AuditTargetType;
-  metadata?: Record<string, unknown>;
-  ip?: string;
-  userAgent?: string;
-  requestId?: string;
-}
-
 export type AuditSelect = InferSelectModel<typeof auditLog>;
 export type AuditInsert = InferInsertModel<typeof auditLog>;
 

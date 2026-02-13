@@ -1,9 +1,6 @@
-import { ServiceResult } from "./types";
-import { LogAuditParams } from "./types";
+import { AuditInsert, ServiceResult } from "./types";
 
-export function validateAuditParams(
-  params: LogAuditParams,
-): ServiceResult<null> {
+export function validateAuditParams(params: AuditInsert): ServiceResult<null> {
   if (!params.actorType) {
     return {
       ok: false,

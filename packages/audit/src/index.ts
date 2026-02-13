@@ -4,7 +4,7 @@ import {
   type TablesRelationalConfig,
 } from "drizzle-orm";
 import { logAudit } from "./service";
-import { LogAuditParams } from "./types";
+import { AuditInsert } from "./types";
 
 export function createAudit<
   TQueryResult extends PgQueryResultHKT,
@@ -13,7 +13,7 @@ export function createAudit<
     ExtractTablesWithRelations<TFullSchema>,
 >(deps: { db: PgDatabase<TQueryResult, TFullSchema, TSchema> }) {
   return {
-    logAudit: (params: LogAuditParams) => logAudit(params, deps.db),
+    logAudit: (params: AuditInsert) => logAudit(params, deps.db),
   };
 }
 

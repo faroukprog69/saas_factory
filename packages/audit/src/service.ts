@@ -1,12 +1,11 @@
-import { ServiceResult } from "./types";
+import { AuditInsert, ServiceResult } from "./types";
 import { validateAuditParams } from "./helpers";
-import { LogAuditParams } from "./types";
 import { AuditSelect } from "./types";
 import { auditLog } from "./schema";
 import type { PgDatabase } from "drizzle-orm/pg-core";
 
 export async function logAudit(
-  params: LogAuditParams,
+  params: AuditInsert,
   db: PgDatabase<any, any, any>,
 ): Promise<ServiceResult<AuditSelect>> {
   const validation = validateAuditParams(params);
@@ -24,7 +23,7 @@ export async function logAudit(
         action: params.action,
         targetId: params.targetId ?? null,
         targetType: params.targetType ?? null,
-        metadata: params.metadata ?? null,
+        metadata: params.metadata ?? {},
         ip: params.ip ?? null,
         userAgent: params.userAgent ?? null,
       })

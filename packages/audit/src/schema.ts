@@ -42,3 +42,9 @@ export const auditLog = pgTable(
     auditActorIndex: index("audit_actor_idx").on(table.actorId),
   }),
 );
+export const auditSchema = {
+  actorTypeEnum,
+  auditLog,
+} as const;
+
+export type AuditSchema = typeof auditSchema;
