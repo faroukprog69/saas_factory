@@ -2,10 +2,9 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import type { BetterAuthOptions } from "better-auth";
-import type { PgDatabase } from "drizzle-orm/pg-core";
 
 export function createAuth(
-  db: PgDatabase<any, any, any>,
+  db: Parameters<typeof drizzleAdapter>[0],
   authSchema: Record<string, any>,
   options?: Partial<BetterAuthOptions>,
 ) {
