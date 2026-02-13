@@ -1,5 +1,11 @@
 # @faroukprog69/db
 
+## 0.0.2
+
+### Patch Changes
+
+- e4edd4e: Improve schema typing and package orchestration.
+
 ## 0.0.1
 
 ### Patch Changes
