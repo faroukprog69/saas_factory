@@ -18,28 +18,31 @@
     }
   },
   "scripts": {
-    "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --watch --dts --clean",
     "build": "tsup src/index.ts --format cjs,esm --dts --clean --minify",
     "lint": "eslint . --max-warnings 0",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "seed": "tsx src/seed.ts"
   },
-  "dependencies": {
-    "@neondatabase/serverless": "^1.0.2",
-    "dotenv": "^17.2.4",
+  "peerDependencies": {
     "drizzle-orm": "^0.45.1"
   },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "dotenv": "^16.4.7"
+  },
   "devDependencies": {
-    "@types/pg": "^8.16.0",
-    "drizzle-kit": "^0.31.9",
+    "@types/pg": "^8.11.11",
+    "drizzle-kit": "^0.30.4",
+    "drizzle-orm": "^0.45.1",
     "eslint": "^8.57.0",
     "rimraf": "^5.0.5",
     "tsup": "^8.0.2",
     "tsx": "^4.21.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "pg": "^8.13.1"
   },
-  "packageManager": "pnpm@10.19.0"
+  "packageManager": "pnpm@10.4.1"
 }
