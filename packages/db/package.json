@@ -1,18 +1,25 @@
 {
-  "name": "@adamararawi/db",
-  "version": "1.0.0",
+  "name": "@faroukprog69/db",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@adamararawi"
+    "registry": "https://npm.pkg.github.com/@faroukprog69"
   },
   "exports": {
-    ".": "./src/client.ts",
-    "./schema": "./src/schema/index.ts",
-    "./types": "./src/types/index.ts",
-    "./helpers": "./src/helpers.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
   },
   "scripts": {
-    "dev": "tsup src/client.ts --watch",
-    "build": "tsup src/client.ts",
+    "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean --minify",
     "lint": "eslint . --max-warnings 0",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",

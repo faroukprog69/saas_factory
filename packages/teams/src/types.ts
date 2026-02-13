@@ -1,4 +1,9 @@
-import { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import {
+  ExtractTablesWithRelations,
+  InferInsertModel,
+  InferSelectModel,
+  TablesRelationalConfig,
+} from "drizzle-orm";
 
 import {
   team,
@@ -8,6 +13,7 @@ import {
   teamStatusEnum,
   teamRoleEnum,
 } from "./schema";
+import { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 
 /* =====================================================
    TEAM
@@ -80,3 +86,10 @@ export type ServiceError = {
     | "INTERNAL_ERROR";
   message: string;
 };
+
+export type DBInstance<
+  TQueryResult extends PgQueryResultHKT = PgQueryResultHKT,
+  TFullSchema extends Record<string, unknown> = Record<string, unknown>,
+  TSchema extends TablesRelationalConfig =
+    ExtractTablesWithRelations<TFullSchema>,
+> = PgDatabase<TQueryResult, TFullSchema, TSchema>;

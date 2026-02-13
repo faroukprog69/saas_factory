@@ -1,21 +1,20 @@
-"use server";
-
 import { eq, and, isNull } from "drizzle-orm";
 import { ServiceResult } from "@/src/types";
 import crypto from "crypto";
 import { Permissions } from "@/src/permissions";
 import { getMembershipWithTeam } from "@/src/helpers";
 import { TeamRole } from "../types";
+import { DBInstance } from "../types";
 
 /* =====================================================
    ADD MEMBER
 ===================================================== */
-export async function addMember<T>(
+export async function addMember<T, TFullSchema extends Record<string, unknown>>(
   teamId: string,
   userId: string,
   role: TeamRole,
   currentUserId: string,
-  db: any,
+  db: DBInstance<any, TFullSchema>,
   auditLog: any,
   user: any,
   teamMember: any,
@@ -137,12 +136,15 @@ export async function addMember<T>(
 /* =====================================================
    CHANGE ROLE
 ===================================================== */
-export async function changeRole<T>(
+export async function changeRole<
+  T,
+  TFullSchema extends Record<string, unknown>,
+>(
   teamId: string,
   userId: string,
   role: TeamRole,
   currentUserId: string,
-  db: any,
+  db: DBInstance<any, TFullSchema>,
   auditLog: any,
   teamMember: any,
 ): Promise<ServiceResult<T>> {
@@ -246,11 +248,14 @@ export async function changeRole<T>(
 /* =====================================================
    REMOVE MEMBER
 ===================================================== */
-export async function removeMember(
+export async function removeMember<
+  T,
+  TFullSchema extends Record<string, unknown>,
+>(
   teamId: string,
   userId: string,
   currentUserId: string,
-  db: any,
+  db: DBInstance<any, TFullSchema>,
   auditLog: any,
   teamMember: any,
 ): Promise<ServiceResult<{ message: string }>> {

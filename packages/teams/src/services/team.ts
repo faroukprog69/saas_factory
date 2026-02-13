@@ -1,18 +1,21 @@
-"use server";
-
 import { ServiceResult } from "@/src/types";
 import { generateTeamSlug, getMembershipWithTeam } from "@/src/helpers";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
 import { Permissions } from "../permissions";
+import { DBInstance } from "../types";
+import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 
 /* =====================================================
    CREATE TEAM
 ===================================================== */
-export async function createTeamForUser<T>(
+export async function createTeamForUser<
+  T,
+  TFullSchema extends Record<string, unknown>,
+>(
   userId: string,
   name: string,
-  db: any,
+  db: DBInstance<NodePgQueryResultHKT, TFullSchema>,
   auditLog: (params: any) => Promise<any>,
   team: any,
   teamMember: any,
@@ -100,13 +103,16 @@ interface BaseTeam {
   createdAt: any;
   updatedAt: any;
 }
-export async function updateTeam<T extends BaseTeam>(
+export async function updateTeam<
+  T extends BaseTeam,
+  TFullSchema extends Record<string, unknown>,
+>(
   teamId: string,
   currentUserId: string,
   updates: Partial<
     Omit<T, "id" | "ownerId" | "createdAt" | "updatedAt" | "slug">
   >,
-  db: any,
+  db: DBInstance<any, TFullSchema>,
   auditLog: (params: any) => Promise<any>,
   team: any,
   teamMember: any,
@@ -138,10 +144,8 @@ export async function updateTeam<T extends BaseTeam>(
           error: { code: "UNAUTHORIZED", message: "Not an owner" },
         };
       }
-      const slug = updates.name ? generateTeamSlug(updates.name) : undefined;
       const updated = {
         ...updates,
-        ...(slug && { slug }),
       };
 
       const [updatedTeam] = await tx
@@ -179,10 +183,10 @@ export async function updateTeam<T extends BaseTeam>(
 /* =====================================================
    DELETE TEAM
 ===================================================== */
-export async function deleteTeam(
+export async function deleteTeam<TFullSchema extends Record<string, unknown>>(
   currentUserId: string,
   teamId: string,
-  db: any,
+  db: DBInstance<any, TFullSchema>,
   auditLog: (params: any) => Promise<any>,
   team: any,
   teamMember: any,

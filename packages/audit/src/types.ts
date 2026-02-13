@@ -1,5 +1,6 @@
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { actorTypeEnum, auditLog } from "./schema";
+
 export type ServiceResult<T> =
   | { ok: true; data: T }
   | { ok: false; error: ServiceError };
@@ -16,6 +17,8 @@ export type ServiceError = {
     | "INTERNAL_ERROR";
   message: string;
 };
+
+export type AuditActorType = (typeof actorTypeEnum.enumValues)[number];
 
 // Actions
 export type AuditAction =
@@ -55,4 +58,3 @@ export type AuditInsert = InferInsertModel<typeof auditLog>;
 /* =====================================================
    ENUM TYPES (DB enums → TS unions)
 ===================================================== */
-export type AuditActorType = (typeof actorTypeEnum.enumValues)[number];

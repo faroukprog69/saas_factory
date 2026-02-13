@@ -1,4 +1,4 @@
-name: Node.js Package
+name: Release Packages
 
 on:
   push:
@@ -6,27 +6,31 @@ on:
       - main
 
 jobs:
-  publish-gpr:
+  release:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
+      pull-requests: write
+
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           registry-url: https://npm.pkg.github.com/
+          cache: "pnpm"
 
-      - run: npm install
-
-      - run: |
-          for dir in packages/*; do
-            if [ -d "$dir" ]; then
-              echo "Publishing package in $dir"
-              cd $dir && NODE_AUTH_TOKEN=${{secrets.GITHUB_TOKEN}} npm publish
-              cd -
-            fi
-          done
+      - run: pnpm install
+      - run: pnpm -r --filter "./packages/**" build
+      - name: Create Release
+        uses: changesets/action@v1
+        with:
+          publish: pnpm publish -r
         env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: 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

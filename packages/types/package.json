@@ -1,13 +1,24 @@
 {
-  "name": "@adamararawi/types",
-  "version": "1.0.0",
-  "exports": {
-    ".": "./src/index.ts"
-  },
+  "name": "@faroukprog69/types",
+  "version": "0.0.0",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@adamararawi"
+    "registry": "https://npm.pkg.github.com/@faroukprog69"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
   },
   "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean --minify",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {

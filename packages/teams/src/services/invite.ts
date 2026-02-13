@@ -1,21 +1,23 @@
-"use server";
-
 import { ServiceResult } from "../types";
 import { Permissions } from "../permissions";
 import { getMembershipWithTeam } from "../helpers";
 import { and, eq } from "drizzle-orm";
 import crypto from "crypto";
 import { TeamRole } from "../types";
+import { DBInstance } from "../types";
 
 /* =====================================================
    CREATE INVITE
 ===================================================== */
-export async function createInvite<T>(
+export async function createInvite<
+  T,
+  TFullSchema extends Record<string, unknown>,
+>(
   teamId: string,
   currentUserId: string,
   email: string,
   role: TeamRole,
-  db: any,
+  db: DBInstance<any, TFullSchema>,
   auditLog: any,
   user: any,
   teamMember: any,
@@ -132,10 +134,13 @@ export async function createInvite<T>(
 /* =====================================================
    ACCEPT INVITE
 ===================================================== */
-export async function acceptInvite<T>(
+export async function acceptInvite<
+  T,
+  TFullSchema extends Record<string, unknown>,
+>(
   token: string,
   userId: string,
-  db: any,
+  db: DBInstance<any, TFullSchema>,
   auditLog: any,
   teamInvite: any,
   teamMember: any,
@@ -227,11 +232,6 @@ export async function acceptInvite<T>(
         error: { code: "INTERNAL_ERROR", message: "Failed to update invite" },
       };
 
-    await tx
-      .update(teamInvite)
-      .set({ revokedAt: new Date() })
-      .where(eq(teamInvite.id, invite.id));
-
     await auditLog({
       actorId: userId,
       actorType: "user",
@@ -249,11 +249,14 @@ export async function acceptInvite<T>(
 /* =====================================================
    REVOKE INVITE
 ===================================================== */
-export async function revokeInvite<T>(
+export async function revokeInvite<
+  T,
+  TFullSchema extends Record<string, unknown>,
+>(
   teamId: string,
   currentUserId: string,
   inviteId: string,
-  db: any,
+  db: DBInstance<any, TFullSchema>,
   auditLog: any,
   teamInvite: any,
   teamMember: any,

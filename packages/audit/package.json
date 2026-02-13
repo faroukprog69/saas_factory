@@ -1,13 +1,24 @@
 {
-  "name": "@adamararawi/audit",
-  "version": "1.0.0",
+  "name": "@faroukprog69/audit",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@adamararawi"
+    "registry": "https://npm.pkg.github.com/@faroukprog69"
   },
   "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --watch --dts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

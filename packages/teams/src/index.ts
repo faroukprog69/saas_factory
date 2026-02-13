@@ -1,5 +1,6 @@
 import { createTeamForUser, deleteTeam, updateTeam } from "./services/team";
 import { addMember, changeRole, removeMember } from "./services/member";
+import { acceptInvite, createInvite, revokeInvite } from "./services/invite";
 import {
   team,
   teamMember,
@@ -20,18 +21,34 @@ import {
   GetTeamInviteSelect,
   TeamRole,
 } from "./types";
-import { acceptInvite, createInvite, revokeInvite } from "./services/invite";
-
+import { type DBInstance } from "./types";
+import { type PgQueryResultHKT } from "drizzle-orm/pg-core";
+import {
+  type ExtractTablesWithRelations,
+  type TablesRelationalConfig,
+} from "drizzle-orm";
+import { type NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 export * from "./permissions";
 
-type TeamsDeps = {
-  db: any;
+type TeamsDeps<
+  TQueryResult extends PgQueryResultHKT = PgQueryResultHKT,
+  TFullSchema extends Record<string, unknown> = Record<string, unknown>,
+  TSchema extends TablesRelationalConfig =
+    ExtractTablesWithRelations<TFullSchema>,
+> = {
+  db: DBInstance<TQueryResult, TFullSchema, TSchema>;
   audit: {
     log: (params: any) => Promise<any>;
   };
 };
 
-export function createTeams(userSchema: any, deps: TeamsDeps) {
+export type AppTeamsDeps<TFullSchema extends Record<string, unknown>> =
+  TeamsDeps<NodePgQueryResultHKT, TFullSchema>;
+
+export function createTeams<TFullSchema extends Record<string, unknown>>(
+  userSchema: any,
+  deps: AppTeamsDeps<TFullSchema>,
+) {
   const teamSchema = createTeamSchema(userSchema);
   type Team = GetTeamSelect<typeof teamSchema>;
   const teamMemberSchema = createTeamMemberSchema(userSchema);
@@ -42,7 +59,7 @@ export function createTeams(userSchema: any, deps: TeamsDeps) {
 
   return {
     createTeamForUser: (userId: string, name: string) =>
-      createTeamForUser<Team>(
+      createTeamForUser<Team, TFullSchema>(
         userId,
         name,
         deps.db,
@@ -57,7 +74,7 @@ export function createTeams(userSchema: any, deps: TeamsDeps) {
         Omit<Team, "id" | "ownerId" | "createdAt" | "updatedAt" | "slug">
       >,
     ) =>
-      updateTeam<Team>(
+      updateTeam<Team, TFullSchema>(
         teamId,
         currentUserId,
         updates,
@@ -68,7 +85,7 @@ export function createTeams(userSchema: any, deps: TeamsDeps) {
       ),
 
     deleteTeam: (currentUserId: string, teamId: string) =>
-      deleteTeam(
+      deleteTeam<TFullSchema>(
         currentUserId,
         teamId,
         deps.db,
@@ -82,7 +99,7 @@ export function createTeams(userSchema: any, deps: TeamsDeps) {
       currentUserId: string,
       role: TeamRole,
     ) =>
-      addMember<TeamMember>(
+      addMember<TeamMember, TFullSchema>(
         teamId,
         userId,
         role,
@@ -100,7 +117,7 @@ export function createTeams(userSchema: any, deps: TeamsDeps) {
       currentUserId: string,
       role: TeamRole,
     ) =>
-      changeRole<TeamMember>(
+      changeRole<TeamMember, TFullSchema>(
         teamId,
         userId,
         role,
@@ -111,7 +128,7 @@ export function createTeams(userSchema: any, deps: TeamsDeps) {
       ),
 
     removeMember: (teamId: string, userId: string, currentUserId: string) =>
-      removeMember(
+      removeMember<TeamMember, TFullSchema>(
         teamId,
         userId,
         currentUserId,
@@ -126,7 +143,7 @@ export function createTeams(userSchema: any, deps: TeamsDeps) {
       email: string,
       role: TeamRole,
     ) =>
-      createInvite<TeamInvite>(
+      createInvite<TeamInvite, TFullSchema>(
         teamId,
         currentUserId,
         email,
@@ -139,7 +156,7 @@ export function createTeams(userSchema: any, deps: TeamsDeps) {
       ),
 
     acceptInvite: (token: string, userId: string) =>
-      acceptInvite<TeamInvite>(
+      acceptInvite<TeamInvite, TFullSchema>(
         token,
         userId,
         deps.db,
@@ -149,7 +166,7 @@ export function createTeams(userSchema: any, deps: TeamsDeps) {
       ),
 
     revokeInvite: (teamId: string, currentUserId: string, inviteId: string) =>
-      revokeInvite<TeamInvite>(
+      revokeInvite<TeamInvite, TFullSchema>(
         teamId,
         currentUserId,
         inviteId,

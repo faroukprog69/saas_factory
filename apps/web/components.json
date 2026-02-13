@@ -14,8 +14,8 @@
     "components": "@/components",
     "hooks": "@/hooks",
     "lib": "@/lib",
-    "utils": "@workspace/ui/lib/utils",
-    "ui": "@workspace/ui/components"
+    "utils": "@faroukprog69/ui/lib/utils",
+    "ui": "@faroukprog69/ui/components"
   },
   "menuColor": "default",
   "menuAccent": "subtle",

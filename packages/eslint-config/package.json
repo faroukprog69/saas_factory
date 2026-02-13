@@ -1,14 +1,19 @@
 {
-  "name": "@adamararawi/eslint-config",
+  "name": "@faroukprog69/eslint-config",
   "version": "0.0.0",
   "type": "module",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@adamararawi"
+    "registry": "https://npm.pkg.github.com/@faroukprog69"
   },
+  "files": [
+    "base.json",
+    "next.json",
+    "react-internal.json"
+  ],
   "exports": {
-    "./base": "./base.js",
-    "./next-js": "./next.js",
-    "./react-internal": "./react-internal.js"
+    "./base": "./base.json",
+    "./next-js": "./next.json",
+    "./react-internal": "./react-internal.json"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

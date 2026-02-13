@@ -1,4 +1,3 @@
-import { ServiceResult } from "./types";
 import { and, eq } from "drizzle-orm";
 import { customAlphabet } from "nanoid";
 
@@ -17,10 +16,6 @@ export function slugify(value: string) {
     .replace(/\s+/g, "-");
 }
 
-/**
- * تجلب بيانات العضوية مع بيانات الفريق الأساسية في استعلام واحد
- * هذا يقلل من استدعاءات قاعدة البيانات لاحقاً للتحقق من الـ Primary Owner
- */
 export async function getMembershipWithTeam(
   tx: any,
   teamId: string,
@@ -30,23 +25,8 @@ export async function getMembershipWithTeam(
   const result = await tx.query.teamMember.findFirst({
     where: and(eq(teamMember.teamId, teamId), eq(teamMember.userId, userId)),
     with: {
-      team: true, // عمل Join تلقائي مع جدول الفريق
+      team: true,
     },
   });
   return result;
-}
-
-export async function handleQuery<T>(
-  fn: () => Promise<T>,
-): Promise<ServiceResult<T>> {
-  try {
-    const data = await fn();
-    return { ok: true, data };
-  } catch (err: any) {
-    console.error(err);
-    return {
-      ok: false,
-      error: { code: "INTERNAL_ERROR", message: "Query failed" },
-    };
-  }
 }

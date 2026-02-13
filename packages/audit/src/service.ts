@@ -3,10 +3,11 @@ import { validateAuditParams } from "./helpers";
 import { LogAuditParams } from "./types";
 import { AuditSelect } from "./types";
 import { auditLog } from "./schema";
+import type { PgDatabase } from "drizzle-orm/pg-core";
 
 export async function logAudit(
   params: LogAuditParams,
-  db: any,
+  db: PgDatabase<any, any, any>,
 ): Promise<ServiceResult<AuditSelect>> {
   const validation = validateAuditParams(params);
   if (!validation.ok) return validation;

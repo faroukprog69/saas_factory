@@ -1,8 +1,18 @@
 {
-  "name": "@adamararawi/typescript-config",
+  "name": "@faroukprog69/typescript-config",
   "version": "0.0.0",
   "license": "PROPRIETARY",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@adamararawi"
+    "registry": "https://npm.pkg.github.com/@faroukprog69"
+  },
+  "files": [
+    "base.json",
+    "nextjs.json",
+    "react-library.json"
+  ],
+  "exports": {
+    ".": "./base.json",
+    "./nextjs": "./nextjs.json",
+    "./react-library": "./react-library.json"
   }
 }
