@@ -1,6 +1,6 @@
 {
   "name": "@faroukprog69/typescript-config",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "PROPRIETARY",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/@faroukprog69"
