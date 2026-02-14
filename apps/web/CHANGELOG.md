@@ -1,5 +1,13 @@
 # web
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies [73d6af7]
+  - @faroukprog69/teams@0.0.2
+  - @faroukprog69/db@0.0.3
+
 ## 0.0.4
 
 ### Patch Changes
