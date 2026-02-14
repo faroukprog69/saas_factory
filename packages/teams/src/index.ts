@@ -1,69 +1,77 @@
 import { createTeamForUser, deleteTeam, updateTeam } from "./services/team";
 import { addMember, changeRole, removeMember } from "./services/member";
 import { acceptInvite, createInvite, revokeInvite } from "./services/invite";
-import {
-  team,
-  teamMember,
-  teamInvite,
-  teamRelations,
-  teamMemberRelations,
-  teamInviteRelations,
-  teamPlanEnum,
-  teamStatusEnum,
-  teamRoleEnum,
-} from "./schema";
-import {
-  createTeamMemberSchema,
-  createTeamSchema,
-  createTeamInviteSchema,
-  GetTeamMemberSelect,
-  GetTeamSelect,
-  GetTeamInviteSelect,
-  TeamRole,
-} from "./types";
-import { type DBInstance } from "./types";
-import { type PgQueryResultHKT } from "drizzle-orm/pg-core";
-import {
-  type ExtractTablesWithRelations,
-  type TablesRelationalConfig,
-} from "drizzle-orm";
-import { type NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
+import { getTeamsSchema } from "./schema";
+import { DBInstance, ServiceResult, TeamRole } from "./types";
+import { InferSelectModel } from "drizzle-orm";
 export * from "./permissions";
 
-type TeamsDeps<
-  TQueryResult extends PgQueryResultHKT = PgQueryResultHKT,
-  TFullSchema extends Record<string, unknown> = Record<string, unknown>,
-  TSchema extends TablesRelationalConfig =
-    ExtractTablesWithRelations<TFullSchema>,
-> = {
-  db: DBInstance<TQueryResult, TFullSchema, TSchema>;
-  audit: {
-    log: (params: any) => Promise<any>;
-  };
+export type TeamsDeps = {
+  db: DBInstance<any, any>;
+  logAudit: (params: any) => Promise<any>;
 };
 
-export type AppTeamsDeps<TFullSchema extends Record<string, unknown>> =
-  TeamsDeps<NodePgQueryResultHKT, TFullSchema>;
-
-export function createTeams<TFullSchema extends Record<string, unknown>>(
-  userSchema: any,
-  deps: AppTeamsDeps<TFullSchema>,
-) {
-  const teamSchema = createTeamSchema(userSchema);
-  type Team = GetTeamSelect<typeof teamSchema>;
-  const teamMemberSchema = createTeamMemberSchema(userSchema);
-  type TeamMember = GetTeamMemberSelect<typeof teamMemberSchema>;
-
-  const teamInviteSchema = createTeamInviteSchema(userSchema);
-  type TeamInvite = GetTeamInviteSelect<typeof teamInviteSchema>;
+export type AppTeamsDeps = TeamsDeps;
+export type TeamsService = {
+  createTeamForUser: (
+    userId: string,
+    name: string,
+  ) => Promise<ServiceResult<any>>;
+  updateTeam: (
+    teamId: string,
+    currentUserId: string,
+    updates: any,
+  ) => Promise<ServiceResult<any>>;
+  deleteTeam: (
+    currentUserId: string,
+    teamId: string,
+  ) => Promise<ServiceResult<{ message: string }>>;
+  addMember: (
+    teamId: string,
+    userId: string,
+    currentUserId: string,
+    role: TeamRole,
+  ) => Promise<ServiceResult<any>>;
+  changeRole: (
+    teamId: string,
+    userId: string,
+    currentUserId: string,
+    role: TeamRole,
+  ) => Promise<ServiceResult<any>>;
+  removeMember: (
+    teamId: string,
+    userId: string,
+    currentUserId: string,
+  ) => Promise<ServiceResult<{ message: string }>>;
+  createInvite: (
+    teamId: string,
+    currentUserId: string,
+    email: string,
+    role: TeamRole,
+  ) => Promise<ServiceResult<any>>;
+  acceptInvite: (token: string, userId: string) => Promise<ServiceResult<any>>;
+  revokeInvite: (
+    teamId: string,
+    currentUserId: string,
+    inviteId: string,
+  ) => Promise<ServiceResult<any>>;
+  schema: ReturnType<typeof getTeamsSchema>;
+};
+export function createTeams<
+  TFullSchema extends Record<string, unknown> = Record<string, any>,
+>(userSchema: any, deps: AppTeamsDeps): TeamsService {
+  const schema = getTeamsSchema(userSchema);
+  const teamSchema = schema.team;
+  const teamMemberSchema = schema.teamMember;
+  const teamInviteSchema = schema.teamInvite;
 
   return {
     createTeamForUser: (userId: string, name: string) =>
-      createTeamForUser<Team, TFullSchema>(
+      createTeamForUser<InferSelectModel<typeof teamSchema>, TFullSchema>(
         userId,
         name,
         deps.db,
-        deps.audit.log,
+        deps.logAudit,
         teamSchema,
         teamMemberSchema,
       ),
@@ -71,15 +79,18 @@ export function createTeams<TFullSchema extends Record<string, unknown>>(
       teamId: string,
       currentUserId: string,
       updates: Partial<
-        Omit<Team, "id" | "ownerId" | "createdAt" | "updatedAt" | "slug">
+        Omit<
+          InferSelectModel<typeof teamSchema>,
+          "id" | "ownerId" | "createdAt" | "updatedAt" | "slug"
+        >
       >,
     ) =>
-      updateTeam<Team, TFullSchema>(
+      updateTeam<InferSelectModel<typeof teamSchema>, TFullSchema>(
         teamId,
         currentUserId,
         updates,
         deps.db,
-        deps.audit.log,
+        deps.logAudit,
         teamSchema,
         teamMemberSchema,
       ),
@@ -89,7 +100,7 @@ export function createTeams<TFullSchema extends Record<string, unknown>>(
         currentUserId,
         teamId,
         deps.db,
-        deps.audit.log,
+        deps.logAudit,
         teamSchema,
         teamMemberSchema,
       ),
@@ -99,13 +110,13 @@ export function createTeams<TFullSchema extends Record<string, unknown>>(
       currentUserId: string,
       role: TeamRole,
     ) =>
-      addMember<TeamMember, TFullSchema>(
+      addMember<InferSelectModel<typeof teamMemberSchema>, TFullSchema>(
         teamId,
         userId,
         role,
         currentUserId,
         deps.db,
-        deps.audit.log,
+        deps.logAudit,
         userSchema,
         teamMemberSchema,
         teamInviteSchema,
@@ -117,23 +128,23 @@ export function createTeams<TFullSchema extends Record<string, unknown>>(
       currentUserId: string,
       role: TeamRole,
     ) =>
-      changeRole<TeamMember, TFullSchema>(
+      changeRole<InferSelectModel<typeof teamMemberSchema>, TFullSchema>(
         teamId,
         userId,
         role,
         currentUserId,
         deps.db,
-        deps.audit.log,
+        deps.logAudit,
         teamMemberSchema,
       ),
 
     removeMember: (teamId: string, userId: string, currentUserId: string) =>
-      removeMember<TeamMember, TFullSchema>(
+      removeMember<InferSelectModel<typeof teamMemberSchema>, TFullSchema>(
         teamId,
         userId,
         currentUserId,
         deps.db,
-        deps.audit.log,
+        deps.logAudit,
         teamMemberSchema,
       ),
 
@@ -143,51 +154,39 @@ export function createTeams<TFullSchema extends Record<string, unknown>>(
       email: string,
       role: TeamRole,
     ) =>
-      createInvite<TeamInvite, TFullSchema>(
+      createInvite<InferSelectModel<typeof teamInviteSchema>, TFullSchema>(
         teamId,
         currentUserId,
         email,
         role,
         deps.db,
-        deps.audit.log,
+        deps.logAudit,
         userSchema,
         teamMemberSchema,
         teamInviteSchema,
       ),
 
     acceptInvite: (token: string, userId: string) =>
-      acceptInvite<TeamInvite, TFullSchema>(
+      acceptInvite<InferSelectModel<typeof teamInviteSchema>, TFullSchema>(
         token,
         userId,
         deps.db,
-        deps.audit.log,
+        deps.logAudit,
         teamInviteSchema,
         teamMemberSchema,
       ),
 
     revokeInvite: (teamId: string, currentUserId: string, inviteId: string) =>
-      revokeInvite<TeamInvite, TFullSchema>(
+      revokeInvite<InferSelectModel<typeof teamInviteSchema>, TFullSchema>(
         teamId,
         currentUserId,
         inviteId,
         deps.db,
-        deps.audit.log,
+        deps.logAudit,
         teamInviteSchema,
         teamMemberSchema,
       ),
-  };
-}
 
-export function getSchema(userSchema: any) {
-  return {
-    team: team(userSchema),
-    teamMember: teamMember(userSchema),
-    teamInvite: teamInvite(userSchema),
-    teamRelations: teamRelations(userSchema),
-    teamMemberRelations: teamMemberRelations(userSchema),
-    teamInviteRelations: teamInviteRelations(userSchema),
-    teamPlanEnum,
-    teamStatusEnum,
-    teamRoleEnum,
+    schema,
   };
 }

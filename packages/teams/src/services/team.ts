@@ -11,7 +11,7 @@ import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 ===================================================== */
 export async function createTeamForUser<
   T,
-  TFullSchema extends Record<string, unknown>,
+  TFullSchema extends Record<string, unknown> = Record<string, unknown>,
 >(
   userId: string,
   name: string,
@@ -105,7 +105,7 @@ interface BaseTeam {
 }
 export async function updateTeam<
   T extends BaseTeam,
-  TFullSchema extends Record<string, unknown>,
+  TFullSchema extends Record<string, unknown> = Record<string, unknown>,
 >(
   teamId: string,
   currentUserId: string,
@@ -183,7 +183,9 @@ export async function updateTeam<
 /* =====================================================
    DELETE TEAM
 ===================================================== */
-export async function deleteTeam<TFullSchema extends Record<string, unknown>>(
+export async function deleteTeam<
+  TFullSchema extends Record<string, unknown> = Record<string, unknown>,
+>(
   currentUserId: string,
   teamId: string,
   db: DBInstance<any, TFullSchema>,
