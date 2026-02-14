@@ -8,6 +8,20 @@
       "when": 1770995966293,
       "tag": "0000_broad_agent_zero",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1771049879308,
+      "tag": "0001_real_richard_fisk",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771049902197,
+      "tag": "0002_fantastic_rawhide_kid",
+      "breakpoints": true
     }
   ]
 }

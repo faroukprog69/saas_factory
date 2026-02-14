@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import {
   pgEnum,
   pgTable,
@@ -32,149 +32,181 @@ export const teamRoleEnum = pgEnum("team_role", [
 ===================================================== */
 
 export function team(userTableSchema: any) {
-    return pgTable(
+  return pgTable(
     "team",
     {
-        id: text("id").primaryKey(),
+      id: text("id").primaryKey(),
 
-        name: text("name").notNull(),
+      name: text("name").notNull(),
 
-        slug: text("slug").notNull(),
+      slug: text("slug").notNull(),
 
-        ownerId: text("owner_id")
+      ownerId: text("owner_id")
         .notNull()
         .references(() => userTableSchema.id, { onDelete: "restrict" }),
 
-        plan: teamPlanEnum("plan").notNull().default("free"),
+      plan: teamPlanEnum("plan").notNull().default("free"),
 
-        status: teamStatusEnum("status").notNull().default("active"),
+      status: teamStatusEnum("status").notNull().default("active"),
 
-        createdAt: timestamp("created_at", { withTimezone: true })
+      createdAt: timestamp("created_at", { withTimezone: true })
         .defaultNow()
         .notNull(),
-        updatedAt: timestamp("updated_at", { withTimezone: true })
+      updatedAt: timestamp("updated_at", { withTimezone: true })
         .$onUpdate(() => /* @__PURE__ */ new Date())
         .notNull(),
     },
     (table) => ({
-        slugUnique: uniqueIndex("team_slug_unique").on(table.slug),
-        ownerIdx: index("team_owner_idx").on(table.ownerId),
-        statusIdx: index("team_status_idx").on(table.status),
+      slugUnique: uniqueIndex("team_slug_unique").on(table.slug),
+      ownerIdx: index("team_owner_idx").on(table.ownerId),
+      statusIdx: index("team_status_idx").on(table.status),
     }),
-    );
+  );
 }
 /* =====================================================
    TEAM MEMBER
 ===================================================== */
-export function teamMember(userTableSchema: any) {
-    return pgTable(
-  "team_member",
-  {
-    id: text("id").primaryKey(),
+export function teamMember(userTableSchema: any, teamTable: any) {
+  return pgTable(
+    "team_member",
+    {
+      id: text("id").primaryKey(),
 
-    teamId: text("team_id")
-      .notNull()
-      .references(() => team(userTableSchema).id, { onDelete: "cascade" }),
+      teamId: text("team_id")
+        .notNull()
+        .references(() => teamTable.id, { onDelete: "cascade" }),
 
-    userId: text("user_id")
-      .notNull()
-      .references(() => userTableSchema.id, { onDelete: "cascade" }),
+      userId: text("user_id")
+        .notNull()
+        .references(() => userTableSchema.id, { onDelete: "cascade" }),
 
-    role: teamRoleEnum("role").notNull().default("member"),
+      role: teamRoleEnum("role").notNull().default("member"),
 
-    joinedAt: timestamp("joined_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => ({
-    teamUserUnique: uniqueIndex("team_member_unique").on(
-      table.teamId,
-      table.userId,
-    ),
-    teamIdx: index("team_member_team_idx").on(table.teamId),
-    userIdx: index("team_member_user_idx").on(table.userId),
-  }),
-);
+      joinedAt: timestamp("joined_at", { withTimezone: true })
+        .defaultNow()
+        .notNull(),
+    },
+    (table) => ({
+      teamUserUnique: uniqueIndex("team_member_unique").on(
+        table.teamId,
+        table.userId,
+      ),
+      teamIdx: index("team_member_team_idx").on(table.teamId),
+      userIdx: index("team_member_user_idx").on(table.userId),
+    }),
+  );
 }
 /* =====================================================
    TEAM INVITE
 ===================================================== */
 
-export function teamInvite(userTableSchema: any) {
-    return pgTable(
-  "team_invite",
-  {
-    id: text("id").primaryKey(),
+export function teamInvite(userTableSchema: any, teamTable: any) {
+  return pgTable(
+    "team_invite",
+    {
+      id: text("id").primaryKey(),
 
-    teamId: text("team_id")
-      .notNull()
-      .references(() => team(userTableSchema).id, { onDelete: "cascade" }),
+      teamId: text("team_id")
+        .notNull()
+        .references(() => teamTable.id, { onDelete: "cascade" }),
 
-    email: text("email").notNull(),
+      email: text("email").notNull(),
 
-    role: teamRoleEnum("role").notNull().default("member"),
+      role: teamRoleEnum("role").notNull().default("member"),
 
-    token: text("token").notNull(),
+      token: text("token").notNull(),
 
-    acceptedAt: timestamp("accepted_at", { withTimezone: true }),
+      acceptedAt: timestamp("accepted_at", { withTimezone: true }),
 
-    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+      revokedAt: timestamp("revoked_at", { withTimezone: true }),
 
-    acceptedBy: text("accepted_by").references(() => userTableSchema.id),
+      acceptedBy: text("accepted_by").references(() => userTableSchema.id),
 
-    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+      expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
 
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => ({
-    tokenUnique: uniqueIndex("team_invite_token_unique").on(table.token),
-    teamEmailUnique: uniqueIndex("team_invite_team_email_unique").on(
-      table.teamId,
-      table.email,
-    ),
-    expiresIdx: index("team_invite_expires_idx").on(table.expiresAt),
-    acceptedByIdx: index("team_invite_accepted_by_idx").on(table.acceptedBy),
-  }),
-);
+      createdAt: timestamp("created_at", { withTimezone: true })
+        .defaultNow()
+        .notNull(),
+    },
+    (table) => ({
+      tokenUnique: uniqueIndex("team_invite_token_unique").on(table.token),
+      teamEmailUnique: uniqueIndex("team_invite_team_email_unique").on(
+        table.teamId,
+        table.email,
+      ),
+      expiresIdx: index("team_invite_expires_idx").on(table.expiresAt),
+      acceptedByIdx: index("team_invite_accepted_by_idx").on(table.acceptedBy),
+    }),
+  );
 }
 /* =====================================================
    RELATIONS
 ===================================================== */
 
-export function teamRelations(userTableSchema: any) {
-  return relations(team(userTableSchema), ({ many, one }) => ({
-    members: many(teamMember(userTableSchema)),
-    invites: many(teamInvite(userTableSchema)),
+export function teamRelations(
+  userTableSchema: any,
+  teamTable: any,
+  teamMemberTable: any,
+  teamInviteTable: any,
+) {
+  return relations(teamTable, ({ many, one }) => ({
+    members: many(teamMemberTable),
+    invites: many(teamInviteTable),
     owner: one(userTableSchema, {
-    fields: [team(userTableSchema).ownerId],
-    references: [userTableSchema.id],
-  }),
-}));
+      fields: [teamTable.ownerId],
+      references: [userTableSchema.id],
+    }),
+  }));
 }
-export function teamMemberRelations(userTableSchema: any) {
-  return relations(teamMember(userTableSchema), ({ one }) => ({
-    team: one(team(userTableSchema), {
-      fields: [teamMember(userTableSchema).teamId],
-      references: [team(userTableSchema).id],
+export function teamMemberRelations(
+  userTableSchema: any,
+  teamTable: any,
+  teamMemberTable: any,
+) {
+  return relations(teamMemberTable, ({ one }) => ({
+    team: one(teamTable, {
+      fields: [teamMemberTable.teamId],
+      references: [teamTable.id],
     }),
     user: one(userTableSchema, {
-    fields: [teamMember(userTableSchema).userId],
-    references: [userTableSchema.id],
-  }),
-}));
+      fields: [teamMemberTable.userId],
+      references: [userTableSchema.id],
+    }),
+  }));
 }
-export function teamInviteRelations(userTableSchema: any) {
-  return relations(teamInvite(userTableSchema), ({ one }) => ({
-    team: one(team(userTableSchema), {
-      fields: [teamInvite(userTableSchema).teamId],
-      references: [team(userTableSchema).id],
+export function teamInviteRelations(
+  userTableSchema: any,
+  teamTable: any,
+  teamInviteTable: any,
+) {
+  return relations(teamInviteTable, ({ one }) => ({
+    team: one(teamTable, {
+      fields: [teamInviteTable.teamId],
+      references: [teamTable.id],
     }),
     acceptedByUser: one(userTableSchema, {
-    fields: [teamInvite(userTableSchema).acceptedBy],
-    references: [userTableSchema.id],
-  }),
-}));
+      fields: [teamInviteTable.acceptedBy],
+      references: [userTableSchema.id],
+    }),
+  }));
 }
 
+export function getTeamsSchema(user: any) {
+  const teamTable = team(user);
+  const teamMemberTable = teamMember(user, teamTable);
+  const teamInviteTable = teamInvite(user, teamTable);
+
+  return {
+    team: teamTable,
+    teamMember: teamMemberTable,
+    teamInvite: teamInviteTable,
+    teamRelations: teamRelations(
+      user,
+      teamTable,
+      teamMemberTable,
+      teamInviteTable,
+    ),
+    teamMemberRelations: teamMemberRelations(user, teamTable, teamMemberTable),
+    teamInviteRelations: teamInviteRelations(user, teamTable, teamInviteTable),
+  };
+}

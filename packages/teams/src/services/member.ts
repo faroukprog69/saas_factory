@@ -9,7 +9,10 @@ import { DBInstance } from "../types";
 /* =====================================================
    ADD MEMBER
 ===================================================== */
-export async function addMember<T, TFullSchema extends Record<string, unknown>>(
+export async function addMember<
+  T,
+  TFullSchema extends Record<string, unknown> = Record<string, unknown>,
+>(
   teamId: string,
   userId: string,
   role: TeamRole,
@@ -138,7 +141,7 @@ export async function addMember<T, TFullSchema extends Record<string, unknown>>(
 ===================================================== */
 export async function changeRole<
   T,
-  TFullSchema extends Record<string, unknown>,
+  TFullSchema extends Record<string, unknown> = Record<string, unknown>,
 >(
   teamId: string,
   userId: string,
@@ -250,7 +253,7 @@ export async function changeRole<
 ===================================================== */
 export async function removeMember<
   T,
-  TFullSchema extends Record<string, unknown>,
+  TFullSchema extends Record<string, unknown> = Record<string, unknown>,
 >(
   teamId: string,
   userId: string,

@@ -11,7 +11,7 @@ import { DBInstance } from "../types";
 ===================================================== */
 export async function createInvite<
   T,
-  TFullSchema extends Record<string, unknown>,
+  TFullSchema extends Record<string, unknown> = Record<string, unknown>,
 >(
   teamId: string,
   currentUserId: string,
@@ -136,7 +136,7 @@ export async function createInvite<
 ===================================================== */
 export async function acceptInvite<
   T,
-  TFullSchema extends Record<string, unknown>,
+  TFullSchema extends Record<string, unknown> = Record<string, unknown>,
 >(
   token: string,
   userId: string,
@@ -251,7 +251,7 @@ export async function acceptInvite<
 ===================================================== */
 export async function revokeInvite<
   T,
-  TFullSchema extends Record<string, unknown>,
+  TFullSchema extends Record<string, unknown> = Record<string, unknown>,
 >(
   teamId: string,
   currentUserId: string,

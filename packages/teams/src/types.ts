@@ -16,51 +16,6 @@ import {
 import { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 
 /* =====================================================
-   TEAM
-===================================================== */
-export function createTeamSchema<TUserSchema>(userSchema: TUserSchema) {
-  return team(userSchema);
-}
-
-// 2. Define Helper Types that users can use with the function result
-export type GetTeamSelect<T extends ReturnType<typeof createTeamSchema>> =
-  InferSelectModel<T>;
-export type GetTeamInsert<T extends ReturnType<typeof createTeamSchema>> =
-  InferInsertModel<T>;
-
-/* =====================================================
-   TEAM MEMBER
-===================================================== */
-
-export function createTeamMemberSchema<TUserSchema>(userSchema: TUserSchema) {
-  return teamMember(userSchema);
-}
-
-// Helper types for team member
-export type GetTeamMemberSelect<
-  T extends ReturnType<typeof createTeamMemberSchema>,
-> = InferSelectModel<T>;
-export type GetTeamMemberInsert<
-  T extends ReturnType<typeof createTeamMemberSchema>,
-> = InferInsertModel<T>;
-
-/* =====================================================
-   TEAM INVITE
-===================================================== */
-
-export function createTeamInviteSchema<TUserSchema>(userSchema: TUserSchema) {
-  return teamInvite(userSchema);
-}
-
-// Helper types for team invite
-export type GetTeamInviteSelect<
-  T extends ReturnType<typeof createTeamInviteSchema>,
-> = InferSelectModel<T>;
-export type GetTeamInviteInsert<
-  T extends ReturnType<typeof createTeamInviteSchema>,
-> = InferInsertModel<T>;
-
-/* =====================================================
    ENUM TYPES (DB enums → TS unions)
 ===================================================== */
 
@@ -90,6 +45,8 @@ export type ServiceError = {
 export type DBInstance<
   TQueryResult extends PgQueryResultHKT = PgQueryResultHKT,
   TFullSchema extends Record<string, unknown> = Record<string, unknown>,
-  TSchema extends TablesRelationalConfig =
-    ExtractTablesWithRelations<TFullSchema>,
-> = PgDatabase<TQueryResult, TFullSchema, TSchema>;
+> = PgDatabase<
+  TQueryResult,
+  TFullSchema,
+  ExtractTablesWithRelations<TFullSchema>
+>;
