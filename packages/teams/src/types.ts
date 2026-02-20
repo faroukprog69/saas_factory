@@ -9,7 +9,6 @@ import {
   team,
   teamMember,
   teamInvite,
-  teamPlanEnum,
   teamStatusEnum,
   teamRoleEnum,
 } from "./schema";
@@ -18,8 +17,6 @@ import { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 /* =====================================================
    ENUM TYPES (DB enums → TS unions)
 ===================================================== */
-
-export type TeamPlan = (typeof teamPlanEnum.enumValues)[number];
 
 export type TeamStatus = (typeof teamStatusEnum.enumValues)[number];
 

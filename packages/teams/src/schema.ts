@@ -12,8 +12,6 @@ import {
    ENUMS
 ===================================================== */
 
-export const teamPlanEnum = pgEnum("team_plan", ["free", "pro", "enterprise"]);
-
 export const teamStatusEnum = pgEnum("team_status", [
   "active",
   "suspended",
@@ -44,8 +42,6 @@ export function team(userTableSchema: any) {
       ownerId: text("owner_id")
         .notNull()
         .references(() => userTableSchema.id, { onDelete: "restrict" }),
-
-      plan: teamPlanEnum("plan").notNull().default("free"),
 
       status: teamStatusEnum("status").notNull().default("active"),
 
