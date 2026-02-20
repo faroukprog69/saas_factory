@@ -26,7 +26,6 @@ export function LoginForm({
       const result = await authClient.signIn.social({
         provider: "google",
       });
-      console.log(result);
     };
 
     startTransition(signIn);

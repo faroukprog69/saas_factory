@@ -18,6 +18,7 @@
   "dependencies": {
     "@faroukprog69/audit": "workspace:*",
     "@faroukprog69/auth": "workspace:*",
+    "@faroukprog69/billing": "workspace:*",
     "@faroukprog69/db": "workspace:*",
     "@faroukprog69/teams": "workspace:*",
     "@faroukprog69/ui": "workspace:*",

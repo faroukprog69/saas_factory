@@ -1,13 +1,18 @@
 // apps/web/lib/schema.ts
-import { authSchema } from "@faroukprog69/auth/schema";
-import { auditSchema } from "@faroukprog69/audit/schema";
-import { getTeamsSchema } from "@faroukprog69/teams/schema";
 
-const generatedTeamsSchema = getTeamsSchema(authSchema.user);
+import { auditSchema } from "@faroukprog69/audit/schema";
+import { authSchema, user } from "@faroukprog69/auth/schema";
+import { getTeamsSchema } from "@faroukprog69/teams/schema";
+import { getBillingSchema } from "@faroukprog69/billing/schema";
+
+const teamsSchema = getTeamsSchema(user);
+const billingSchema = getBillingSchema(teamsSchema.team);
 
 export * from "@faroukprog69/audit/schema";
 export * from "@faroukprog69/auth/schema";
 export * from "@faroukprog69/teams/schema";
+export { subscriptionStatusEnum } from "@faroukprog69/billing/schema";
+
 export const {
   team,
   teamMember,
@@ -15,10 +20,13 @@ export const {
   teamRelations,
   teamMemberRelations,
   teamInviteRelations,
-} = generatedTeamsSchema;
+} = teamsSchema;
 
-export const schema = {
+export const { subscription, subscriptionRelations } = billingSchema;
+
+export const schema = Object.freeze({
   ...auditSchema,
   ...authSchema,
-  ...generatedTeamsSchema,
-};
+  ...teamsSchema,
+  ...billingSchema,
+});

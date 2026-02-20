@@ -2,7 +2,7 @@ import { Auth, createAuth } from "@faroukprog69/auth";
 import { db } from "./db";
 import { schema } from "./schema";
 import { logAudit } from "./audit";
-import { teams } from "./teams";
+import { teamsService } from "./teams";
 
 export const auth: Auth = createAuth(db, schema, {
   baseURL: process.env.BETTER_AUTH_URL,
@@ -32,11 +32,10 @@ export const auth: Auth = createAuth(db, schema, {
             targetType: "user",
             action: "session_created",
           });
-          const result = await teams.createTeamForUser(
+          const result = await teamsService.createTeamForUser(
             session.userId,
             `Team of ${session.userId}`,
           );
-          console.log("Team creation result:", result);
         },
       },
     },
