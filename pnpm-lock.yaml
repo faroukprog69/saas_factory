@@ -35,6 +35,9 @@ importers:
       '@faroukprog69/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@faroukprog69/billing':
+        specifier: workspace:*
+        version: link:../../packages/billing
       '@faroukprog69/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -126,6 +129,31 @@ importers:
       better-auth:
         specifier: ^1.4.18
         version: 1.4.18(drizzle-kit@0.31.9)(drizzle-orm@0.45.1(@neondatabase/serverless@0.10.4)(@types/pg@8.16.0)(gel@2.2.0)(kysely@0.28.11)(pg@8.18.0))(next@16.1.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(pg@8.18.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      drizzle-orm:
+        specifier: ^0.45.1
+        version: 0.45.1(@neondatabase/serverless@0.10.4)(@types/pg@8.16.0)(gel@2.2.0)(kysely@0.28.11)(pg@8.18.0)
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.1
+      rimraf:
+        specifier: ^5.0.5
+        version: 5.0.10
+      tsup:
+        specifier: ^8.0.2
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.21.0)(typescript@5.9.3)
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
+      typescript:
+        specifier: ^5.5.4
+        version: 5.9.3
+
+  packages/billing:
+    dependencies:
+      stripe:
+        specifier: ^20.3.1
+        version: 20.3.1(@types/node@25.2.3)
+    devDependencies:
       drizzle-orm:
         specifier: ^0.45.1
         version: 0.45.1(@neondatabase/serverless@0.10.4)(@types/pg@8.16.0)(gel@2.2.0)(kysely@0.28.11)(pg@8.18.0)
@@ -4073,6 +4101,15 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
 
+  stripe@20.3.1:
+    resolution: {integrity: sha512-k990yOT5G5rhX3XluRPw5Y8RLdJDW4dzQ29wWT66piHrbnM2KyamJ1dKgPsw4HzGHRWjDiSSdcI2WdxQUPV3aQ==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@types/node': '>=16'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+
   styled-jsx@5.1.6:
     resolution: {integrity: sha512-qSVyDTeMotdvQYoHWLNGwRFJHC+i+ZvdBRYosOFgC+Wg1vx4frN2/RG/NA7SYqqvKNLf39P2LSRA2pu6n0XYZA==}
     engines: {node: '>= 12.0.0'}
@@ -5665,7 +5702,7 @@ snapshots:
 
   '@types/minimatch@6.0.0':
     dependencies:
-      minimatch: 9.0.0
+      minimatch: 9.0.5
 
   '@types/node@12.20.55': {}
 
@@ -8186,6 +8223,10 @@ snapshots:
   strip-json-comments@2.0.1: {}
 
   strip-json-comments@3.1.1: {}
+
+  stripe@20.3.1(@types/node@25.2.3):
+    optionalDependencies:
+      '@types/node': 25.2.3
 
   styled-jsx@5.1.6(react@19.2.4):
     dependencies:
