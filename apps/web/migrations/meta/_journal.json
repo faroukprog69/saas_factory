@@ -29,6 +29,13 @@
       "when": 1771584001636,
       "tag": "0003_ordinary_swarm",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1771654225695,
+      "tag": "0004_plain_lightspeed",
+      "breakpoints": true
     }
   ]
 }
