@@ -21,6 +21,14 @@ export function subscriptionRelations(
     }),
   }));
 }
+export function targetRelations(targetTable: any, subscriptionTable: any) {
+  return relations(targetTable, ({ one }) => ({
+    subscription: one(subscriptionTable, {
+      fields: [targetTable.id],
+      references: [subscriptionTable.targetId],
+    }),
+  }));
+}
 
 export function subscription(targetTable: any) {
   return pgTable("subscription", {
@@ -53,9 +61,10 @@ export function getBillingSchema(targetTable: any) {
     subscriptionTable,
     targetTable,
   );
-
+  const targetRelationsTable = targetRelations(targetTable, subscriptionTable);
   return {
     subscription: subscriptionTable,
     subscriptionRelations: subscriptionRelationsTable,
+    targetRelations: targetRelationsTable,
   };
 }
