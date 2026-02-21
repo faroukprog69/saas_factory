@@ -1,0 +1,43 @@
+{
+  "name": "@faroukprog69/mail",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/@faroukprog69"
+  },
+  "scripts": {
+    "dev": "tsup src/index.ts --format cjs,esm --watch --dts --clean",
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean --minify",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "peerDependencies": {
+    "@react-email/render": "^2.0.4",
+    "react": ">=18",
+    "resend": "^6.9.2"
+  },
+  "devDependencies": {
+    "@react-email/render": "^2.0.4",
+    "@types/react": "^19.2.10",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^8.57.0",
+    "react": "^18.2.0",
+    "resend": "^6.9.2",
+    "tsup": "^8.0.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.5.4"
+  },
+  "packageManager": "pnpm@10.4.1"
+}
