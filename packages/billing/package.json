@@ -39,6 +39,10 @@
       "optional": false
     }
   },
+  "dependencies": {
+    "@faroukprog69/errors": "workspace:*",
+    "@faroukprog69/types": "workspace:*"
+  },
   "devDependencies": {
     "drizzle-orm": "^0.45.1",
     "eslint": "^8.57.0",

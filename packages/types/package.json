@@ -21,6 +21,9 @@
     "build": "tsup src/index.ts --format cjs,esm --dts --clean --minify",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "dependencies": {
+    "@faroukprog69/errors": "workspace:*"
+  },
   "devDependencies": {
     "eslint": "^8.57.0",
     "rimraf": "^5.0.5",

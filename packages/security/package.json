@@ -27,6 +27,9 @@
     "build": "tsup src/* --format cjs,esm --dts --clean --minify",
     "lint": "eslint . --max-warnings 0"
   },
+  "dependencies": {
+    "@faroukprog69/errors": "workspace:*"
+  },
   "devDependencies": {
     "eslint": "^8.57.0",
     "rimraf": "^5.0.5",

@@ -13,6 +13,7 @@ import {
   teamRoleEnum,
 } from "./schema";
 import { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
+import { ServiceResult, ServiceError } from "@faroukprog69/types";
 
 /* =====================================================
    ENUM TYPES (DB enums → TS unions)
@@ -21,23 +22,6 @@ import { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 export type TeamStatus = (typeof teamStatusEnum.enumValues)[number];
 
 export type TeamRole = (typeof teamRoleEnum.enumValues)[number];
-
-export type ServiceResult<T> =
-  | { ok: true; data: T }
-  | { ok: false; error: ServiceError };
-
-export type ServiceError = {
-  code:
-    | "VALIDATION_ERROR"
-    | "UNAUTHORIZED"
-    | "FORBIDDEN"
-    | "NOT_FOUND"
-    | "CONFLICT"
-    | "INVALID_ACTION"
-    | "EXPIRED"
-    | "INTERNAL_ERROR";
-  message: string;
-};
 
 export type DBInstance<
   TQueryResult extends PgQueryResultHKT = PgQueryResultHKT,

@@ -1,6 +1,8 @@
 import { Stripe } from "stripe";
-import type { DBInstance, ServiceResult } from "./types";
+import type { DBInstance } from "./types";
+import { ServiceResult } from "@faroukprog69/types";
 import { eq } from "drizzle-orm";
+import { AppError } from "@faroukprog69/errors";
 
 /**
  * 1. إنشاء جلسة الدفع (Checkout)
@@ -24,7 +26,10 @@ export async function createCheckout<
   if (!stripeConfig.targetId || !stripeConfig.priceId) {
     return {
       ok: false,
-      error: { code: "VALIDATION_ERROR", message: "Invalid input" },
+      error: new AppError({
+        code: "VALIDATION_ERROR",
+        message: "Invalid input",
+      }),
     };
   }
   return dbConfig.db.transaction(async (tx: any) => {
@@ -35,10 +40,10 @@ export async function createCheckout<
     if (sub?.status === "active") {
       return {
         ok: false,
-        error: {
+        error: new AppError({
           code: "INVALID_ACTION",
           message: "You are already subscribed",
-        },
+        }),
       };
     }
 
@@ -66,10 +71,10 @@ export async function createCheckout<
     if (!session || !session.url) {
       return {
         ok: false,
-        error: {
+        error: new AppError({
           code: "INTERNAL_ERROR",
           message: "Failed to create checkout session",
-        },
+        }),
       };
     }
 
@@ -99,7 +104,10 @@ export const createPortal = async <
   if (!stripeConfig.targetId || !stripeConfig.returnUrl) {
     return {
       ok: false,
-      error: { code: "VALIDATION_ERROR", message: "Invalid input" },
+      error: new AppError({
+        code: "VALIDATION_ERROR",
+        message: "Invalid input",
+      }),
     };
   }
 
@@ -111,7 +119,10 @@ export const createPortal = async <
     if (!sub?.stripeCustomerId) {
       return {
         ok: false,
-        error: { code: "NOT_FOUND", message: "Subscription not found" },
+        error: new AppError({
+          code: "NOT_FOUND",
+          message: "Subscription not found",
+        }),
       };
     }
 
@@ -145,7 +156,10 @@ export const getSubscription = async <
   if (!stripeConfig.targetId) {
     return {
       ok: false,
-      error: { code: "VALIDATION_ERROR", message: "Invalid input" },
+      error: new AppError({
+        code: "VALIDATION_ERROR",
+        message: "Invalid input",
+      }),
     };
   }
 
@@ -157,7 +171,10 @@ export const getSubscription = async <
     if (!data)
       return {
         ok: false,
-        error: { code: "NOT_FOUND", message: "Subscription not found" },
+        error: new AppError({
+          code: "NOT_FOUND",
+          message: "Subscription not found",
+        }),
       };
 
     return {

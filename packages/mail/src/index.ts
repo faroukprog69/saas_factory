@@ -2,6 +2,7 @@
 import { Resend } from "resend";
 import { render } from "@react-email/render";
 import { ReactElement } from "react";
+import { ValidationError } from "@faroukprog69/errors";
 
 export interface SendEmailOptions {
   to: string | string[];
@@ -10,7 +11,7 @@ export interface SendEmailOptions {
 }
 
 export const createMailClient = (config: { apiKey: string; from: string }) => {
-  if (!config.apiKey) throw new Error("Resend API Key is missing");
+  if (!config.apiKey) throw new ValidationError({ apiKey: "missing" });
 
   const resend = new Resend(config.apiKey);
 

@@ -1,15 +1,15 @@
 // packages/security/src/guard.ts
 import { SecurityEngine } from "./engine";
 import { AuthContext, Action } from "./context";
+import { AuthorizationError } from "@faroukprog69/errors";
 
 export function createGuard(engine: SecurityEngine) {
   return async (ctx: AuthContext, action: Action, resource?: any) => {
     const decision = await engine.can(ctx, action, resource);
 
     if (!decision.allowed) {
-      // مستقبلاً سنستبدله بـ throw new AuthorizationError()
-      throw new Error(
-        `[${decision.policyName}] UNAUTHORIZED: ${decision.reason}`,
+      throw new AuthorizationError(
+        `[${decision.policyName}] ${decision.reason}`,
       );
     }
 

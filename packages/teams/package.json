@@ -28,6 +28,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@faroukprog69/errors": "workspace:*",
+    "@faroukprog69/types": "workspace:*",
     "crypto": "^1.0.1",
     "drizzle-orm": "^0.45.1",
     "nanoid": "^5.1.6",

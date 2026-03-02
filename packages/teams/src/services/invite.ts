@@ -1,10 +1,11 @@
-import { ServiceResult } from "../types";
+import { ServiceResult } from "@faroukprog69/types";
 import { Permissions } from "../permissions";
 import { getMembershipWithTeam } from "../helpers";
 import { and, eq } from "drizzle-orm";
 import crypto from "crypto";
 import { TeamRole } from "../types";
 import { DBInstance } from "../types";
+import { AppError } from "@faroukprog69/errors";
 
 /* =====================================================
    CREATE INVITE
@@ -26,7 +27,10 @@ export async function createInvite<
   if (!teamId || !email || !role) {
     return {
       ok: false,
-      error: { code: "VALIDATION_ERROR", message: "Invalid input" },
+      error: new AppError({
+        code: "VALIDATION_ERROR",
+        message: "Invalid input",
+      }),
     };
   }
 
@@ -40,13 +44,19 @@ export async function createInvite<
     if (!membership) {
       return {
         ok: false,
-        error: { code: "UNAUTHORIZED", message: "Not a team member" },
+        error: new AppError({
+          code: "UNAUTHORIZED",
+          message: "Not a team member",
+        }),
       };
     }
     if (!Permissions.canManageMembers(membership.role)) {
       return {
         ok: false,
-        error: { code: "UNAUTHORIZED", message: "Not authorized" },
+        error: new AppError({
+          code: "UNAUTHORIZED",
+          message: "Not authorized",
+        }),
       };
     }
 
@@ -60,10 +70,10 @@ export async function createInvite<
     ) {
       return {
         ok: false,
-        error: {
+        error: new AppError({
           code: "INVALID_ACTION",
           message: "You cannot assign this role",
-        },
+        }),
       };
     }
 
@@ -81,7 +91,10 @@ export async function createInvite<
       if (member) {
         return {
           ok: false,
-          error: { code: "CONFLICT", message: "User already a member" },
+          error: new AppError({
+            code: "CONFLICT",
+            message: "User already a member",
+          }),
         };
       }
     }
@@ -92,10 +105,10 @@ export async function createInvite<
     if (existingInvite) {
       return {
         ok: false,
-        error: {
+        error: new AppError({
           code: "CONFLICT",
           message: "Invite already exists for this email",
-        },
+        }),
       };
     }
 
@@ -114,7 +127,10 @@ export async function createInvite<
     if (!invite) {
       return {
         ok: false,
-        error: { code: "INTERNAL_ERROR", message: "Failed to create invite" },
+        error: new AppError({
+          code: "INTERNAL_ERROR",
+          message: "Failed to create invite",
+        }),
       };
     }
 
@@ -148,7 +164,10 @@ export async function acceptInvite<
   if (!token || !userId) {
     return {
       ok: false,
-      error: { code: "VALIDATION_ERROR", message: "Invalid input" },
+      error: new AppError({
+        code: "VALIDATION_ERROR",
+        message: "Invalid input",
+      }),
     };
   }
 
@@ -160,24 +179,24 @@ export async function acceptInvite<
     if (!invite) {
       return {
         ok: false,
-        error: { code: "NOT_FOUND", message: "Invite not found" },
+        error: new AppError({ code: "NOT_FOUND", message: "Invite not found" }),
       };
     }
 
     if (invite.acceptedAt || invite.revokedAt) {
       return {
         ok: false,
-        error: {
+        error: new AppError({
           code: "INVALID_ACTION",
           message: "Invite already used or revoked",
-        },
+        }),
       };
     }
 
     if (invite.expiresAt.getTime() < Date.now()) {
       return {
         ok: false,
-        error: { code: "EXPIRED", message: "Invite has expired" },
+        error: new AppError({ code: "EXPIRED", message: "Invite has expired" }),
       };
     }
 
@@ -191,7 +210,10 @@ export async function acceptInvite<
     if (existingMember) {
       return {
         ok: false,
-        error: { code: "CONFLICT", message: "User is already a team member" },
+        error: new AppError({
+          code: "CONFLICT",
+          message: "User is already a team member",
+        }),
       };
     }
 
@@ -208,14 +230,20 @@ export async function acceptInvite<
     if (!newMember) {
       return {
         ok: false,
-        error: { code: "INTERNAL_ERROR", message: "Failed to add member" },
+        error: new AppError({
+          code: "INTERNAL_ERROR",
+          message: "Failed to add member",
+        }),
       };
     }
 
     if (!["owner", "admin", "member", "viewer"].includes(invite.role)) {
       return {
         ok: false,
-        error: { code: "INVALID_ACTION", message: "Invalid role" },
+        error: new AppError({
+          code: "INVALID_ACTION",
+          message: "Invalid role",
+        }),
       };
     }
 
@@ -229,7 +257,10 @@ export async function acceptInvite<
     if (!updatedInvite)
       return {
         ok: false,
-        error: { code: "INTERNAL_ERROR", message: "Failed to update invite" },
+        error: new AppError({
+          code: "INTERNAL_ERROR",
+          message: "Failed to update invite",
+        }),
       };
 
     await auditLog({
@@ -264,7 +295,10 @@ export async function revokeInvite<
   if (!teamId || !currentUserId || !inviteId) {
     return {
       ok: false,
-      error: { code: "VALIDATION_ERROR", message: "Invalid input" },
+      error: new AppError({
+        code: "VALIDATION_ERROR",
+        message: "Invalid input",
+      }),
     };
   }
 
@@ -278,17 +312,20 @@ export async function revokeInvite<
     if (!membership) {
       return {
         ok: false,
-        error: { code: "UNAUTHORIZED", message: "Not a team member" },
+        error: new AppError({
+          code: "UNAUTHORIZED",
+          message: "Not a team member",
+        }),
       };
     }
 
     if (!Permissions.canManageMembers(membership.role)) {
       return {
         ok: false,
-        error: {
+        error: new AppError({
           code: "UNAUTHORIZED",
           message: "You are not allowed to manage invites",
-        },
+        }),
       };
     }
 
@@ -299,17 +336,17 @@ export async function revokeInvite<
     if (!invite) {
       return {
         ok: false,
-        error: { code: "NOT_FOUND", message: "Invite not found" },
+        error: new AppError({ code: "NOT_FOUND", message: "Invite not found" }),
       };
     }
 
     if (invite.acceptedAt || invite.revokedAt) {
       return {
         ok: false,
-        error: {
+        error: new AppError({
           code: "INVALID_ACTION",
           message: "Invite cannot be revoked",
-        },
+        }),
       };
     }
 
@@ -322,7 +359,10 @@ export async function revokeInvite<
     if (!updatedInvite)
       return {
         ok: false,
-        error: { code: "INTERNAL_ERROR", message: "Failed to revoke invite" },
+        error: new AppError({
+          code: "INTERNAL_ERROR",
+          message: "Failed to revoke invite",
+        }),
       };
 
     await auditLog({

@@ -28,6 +28,9 @@
     "react": ">=18",
     "resend": "^6.9.2"
   },
+  "dependencies": {
+    "@faroukprog69/errors": "workspace:*"
+  },
   "devDependencies": {
     "@react-email/render": "^2.0.4",
     "@types/react": "^19.2.10",

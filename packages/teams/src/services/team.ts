@@ -1,10 +1,11 @@
-import { ServiceResult } from "@/src/types";
+import { ServiceResult } from "@faroukprog69/types";
 import { generateTeamSlug, getMembershipWithTeam } from "@/src/helpers";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
 import { Permissions } from "../permissions";
 import { DBInstance } from "../types";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
+import { AppError } from "@faroukprog69/errors";
 
 /* =====================================================
    CREATE TEAM
@@ -23,7 +24,10 @@ export async function createTeamForUser<
   if (!userId || !name?.trim()) {
     return {
       ok: false,
-      error: { code: "VALIDATION_ERROR", message: "Invalid input" },
+      error: new AppError({
+        code: "VALIDATION_ERROR",
+        message: "Invalid input",
+      }),
     };
   }
 
@@ -56,7 +60,10 @@ export async function createTeamForUser<
       if (!teamRow) {
         return {
           ok: false,
-          error: { code: "INTERNAL_ERROR", message: "Failed to create team" },
+          error: new AppError({
+            code: "INTERNAL_ERROR",
+            message: "Failed to create team",
+          }),
         };
       }
 
@@ -87,7 +94,10 @@ export async function createTeamForUser<
   } catch (error) {
     return {
       ok: false,
-      error: { code: "INTERNAL_ERROR", message: "Failed to create team" },
+      error: new AppError({
+        code: "INTERNAL_ERROR",
+        message: "Failed to create team",
+      }),
     };
   }
 }
@@ -125,7 +135,10 @@ export async function updateTeam<
   ) {
     return {
       ok: false,
-      error: { code: "VALIDATION_ERROR", message: "Invalid input" },
+      error: new AppError({
+        code: "VALIDATION_ERROR",
+        message: "Invalid input",
+      }),
     };
   }
 
@@ -141,7 +154,10 @@ export async function updateTeam<
       if (!currentUser || currentUser.role !== "owner") {
         return {
           ok: false,
-          error: { code: "UNAUTHORIZED", message: "Not an owner" },
+          error: new AppError({
+            code: "UNAUTHORIZED",
+            message: "Not an owner",
+          }),
         };
       }
       const updated = {
@@ -157,7 +173,7 @@ export async function updateTeam<
       if (!updatedTeam) {
         return {
           ok: false,
-          error: { code: "NOT_FOUND", message: "Team not found" },
+          error: new AppError({ code: "NOT_FOUND", message: "Team not found" }),
         };
       }
       await auditLog({
@@ -175,7 +191,10 @@ export async function updateTeam<
     console.error("updateTeam error:", err);
     return {
       ok: false,
-      error: { code: "INTERNAL_ERROR", message: "Failed to update team" },
+      error: new AppError({
+        code: "INTERNAL_ERROR",
+        message: "Failed to update team",
+      }),
     };
   }
 }
@@ -196,7 +215,10 @@ export async function deleteTeam<
   if (!teamId || !currentUserId) {
     return {
       ok: false,
-      error: { code: "VALIDATION_ERROR", message: "Invalid input" },
+      error: new AppError({
+        code: "VALIDATION_ERROR",
+        message: "Invalid input",
+      }),
     };
   }
 
@@ -215,10 +237,10 @@ export async function deleteTeam<
       ) {
         return {
           ok: false,
-          error: {
+          error: new AppError({
             code: "UNAUTHORIZED",
             message: "Only Primary Owner can delete team",
-          },
+          }),
         };
       }
 
@@ -239,7 +261,10 @@ export async function deleteTeam<
     console.error("deleteTeam error:", err);
     return {
       ok: false,
-      error: { code: "INTERNAL_ERROR", message: "Failed to delete team" },
+      error: new AppError({
+        code: "INTERNAL_ERROR",
+        message: "Failed to delete team",
+      }),
     };
   }
 }

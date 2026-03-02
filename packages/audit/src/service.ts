@@ -1,8 +1,10 @@
-import { AuditInsert, ServiceResult } from "./types";
+import { AuditInsert } from "./types";
 import { validateAuditParams } from "./helpers";
 import { AuditSelect } from "./types";
 import { auditLog } from "./schema";
 import type { PgDatabase } from "drizzle-orm/pg-core";
+import { AppError } from "@faroukprog69/errors";
+import { ServiceResult } from "@faroukprog69/types";
 
 export async function logAudit(
   params: AuditInsert,
@@ -33,10 +35,10 @@ export async function logAudit(
     if (!log) {
       return {
         ok: false,
-        error: {
+        error: new AppError({
           code: "INTERNAL_ERROR",
           message: "Failed to create audit log",
-        },
+        }),
       };
     }
 
@@ -44,10 +46,10 @@ export async function logAudit(
   } catch (err: any) {
     return {
       ok: false,
-      error: {
+      error: new AppError({
         code: "INTERNAL_ERROR",
         message: err.message || "Unknown error",
-      },
+      }),
     };
   }
 }

@@ -1,10 +1,11 @@
 import { eq, and, isNull } from "drizzle-orm";
-import { ServiceResult } from "@/src/types";
+import { ServiceResult } from "@faroukprog69/types";
 import crypto from "crypto";
 import { Permissions } from "@/src/permissions";
 import { getMembershipWithTeam } from "@/src/helpers";
 import { TeamRole } from "../types";
 import { DBInstance } from "../types";
+import { AppError } from "@faroukprog69/errors";
 
 /* =====================================================
    ADD MEMBER
@@ -26,7 +27,10 @@ export async function addMember<
   if (!teamId || !userId || !currentUserId) {
     return {
       ok: false,
-      error: { code: "VALIDATION_ERROR", message: "Invalid input" },
+      error: new AppError({
+        code: "VALIDATION_ERROR",
+        message: "Invalid input",
+      }),
     };
   }
 
@@ -40,14 +44,20 @@ export async function addMember<
     if (!membership) {
       return {
         ok: false,
-        error: { code: "UNAUTHORIZED", message: "Not a team member" },
+        error: new AppError({
+          code: "UNAUTHORIZED",
+          message: "Not a team member",
+        }),
       };
     }
 
     if (!Permissions.canManageMembers(membership.role)) {
       return {
         ok: false,
-        error: { code: "UNAUTHORIZED", message: "You cannot manage members" },
+        error: new AppError({
+          code: "UNAUTHORIZED",
+          message: "You cannot manage members",
+        }),
       };
     }
 
@@ -61,10 +71,10 @@ export async function addMember<
     ) {
       return {
         ok: false,
-        error: {
+        error: new AppError({
           code: "INVALID_ACTION",
           message: "You cannot assign this role",
-        },
+        }),
       };
     }
 
@@ -75,7 +85,10 @@ export async function addMember<
     if (existing) {
       return {
         ok: false,
-        error: { code: "CONFLICT", message: "User already a member" },
+        error: new AppError({
+          code: "CONFLICT",
+          message: "User is already a member",
+        }),
       };
     }
 
@@ -85,7 +98,7 @@ export async function addMember<
     if (!targetUser) {
       return {
         ok: false,
-        error: { code: "NOT_FOUND", message: "User not found" },
+        error: new AppError({ code: "NOT_FOUND", message: "User not found" }),
       };
     }
 
@@ -101,7 +114,10 @@ export async function addMember<
     if (pendingInvite) {
       return {
         ok: false,
-        error: { code: "CONFLICT", message: "User already invited" },
+        error: new AppError({
+          code: "CONFLICT",
+          message: "User already invited",
+        }),
       };
     }
 
@@ -118,7 +134,10 @@ export async function addMember<
     if (!newMember) {
       return {
         ok: false,
-        error: { code: "INTERNAL_ERROR", message: "Failed to add member" },
+        error: new AppError({
+          code: "INTERNAL_ERROR",
+          message: "Failed to add member",
+        }),
       };
     }
 
@@ -154,17 +173,20 @@ export async function changeRole<
   if (!teamId || !userId || !currentUserId) {
     return {
       ok: false,
-      error: { code: "VALIDATION_ERROR", message: "Invalid input" },
+      error: new AppError({
+        code: "VALIDATION_ERROR",
+        message: "Invalid input",
+      }),
     };
   }
 
   if (userId === currentUserId) {
     return {
       ok: false,
-      error: {
+      error: new AppError({
         code: "INVALID_ACTION",
         message: "You cannot change your own role",
-      },
+      }),
     };
   }
 
@@ -178,17 +200,20 @@ export async function changeRole<
     if (!membership) {
       return {
         ok: false,
-        error: { code: "UNAUTHORIZED", message: "Not a team member" },
+        error: new AppError({
+          code: "UNAUTHORIZED",
+          message: "Not a team member",
+        }),
       };
     }
 
     if (!Permissions.canManageMembers(membership.role)) {
       return {
         ok: false,
-        error: {
+        error: new AppError({
           code: "UNAUTHORIZED",
           message: "No permission to change roles",
-        },
+        }),
       };
     }
 
@@ -199,7 +224,10 @@ export async function changeRole<
     if (!target) {
       return {
         ok: false,
-        error: { code: "NOT_FOUND", message: "Target member not found" },
+        error: new AppError({
+          code: "NOT_FOUND",
+          message: "Target member not found",
+        }),
       };
     }
 
@@ -214,10 +242,10 @@ export async function changeRole<
     ) {
       return {
         ok: false,
-        error: {
+        error: new AppError({
           code: "INVALID_ACTION",
           message: "You cannot change to this role",
-        },
+        }),
       };
     }
 
@@ -230,7 +258,10 @@ export async function changeRole<
     if (!updated) {
       return {
         ok: false,
-        error: { code: "INTERNAL_ERROR", message: "Failed to change role" },
+        error: new AppError({
+          code: "INTERNAL_ERROR",
+          message: "Failed to change role",
+        }),
       };
     }
 
@@ -265,17 +296,20 @@ export async function removeMember<
   if (!teamId || !userId || !currentUserId) {
     return {
       ok: false,
-      error: { code: "VALIDATION_ERROR", message: "Invalid input" },
+      error: new AppError({
+        code: "VALIDATION_ERROR",
+        message: "Invalid input",
+      }),
     };
   }
 
   if (currentUserId === userId) {
     return {
       ok: false,
-      error: {
+      error: new AppError({
         code: "INVALID_ACTION",
         message: "You cannot remove yourself (use leave team instead)",
-      },
+      }),
     };
   }
 
@@ -289,7 +323,10 @@ export async function removeMember<
     if (!membership) {
       return {
         ok: false,
-        error: { code: "UNAUTHORIZED", message: "Not a team member" },
+        error: new AppError({
+          code: "UNAUTHORIZED",
+          message: "Not a team member",
+        }),
       };
     }
 
@@ -300,7 +337,7 @@ export async function removeMember<
     if (!target) {
       return {
         ok: false,
-        error: { code: "NOT_FOUND", message: "Member not found" },
+        error: new AppError({ code: "NOT_FOUND", message: "Member not found" }),
       };
     }
 
@@ -320,10 +357,10 @@ export async function removeMember<
     ) {
       return {
         ok: false,
-        error: {
+        error: new AppError({
           code: "INVALID_ACTION",
           message: "You cannot remove this member",
-        },
+        }),
       };
     }
 
@@ -335,7 +372,10 @@ export async function removeMember<
     if (!deleted.length) {
       return {
         ok: false,
-        error: { code: "INTERNAL_ERROR", message: "Failed to remove member" },
+        error: new AppError({
+          code: "INTERNAL_ERROR",
+          message: "Failed to remove member",
+        }),
       };
     }
     await auditLog({

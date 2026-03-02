@@ -9,21 +9,3 @@ export type DBInstance<
   TFullSchema,
   ExtractTablesWithRelations<TFullSchema>
 >;
-export type ServiceResult<T> =
-  | { ok: true; data: T }
-  | { ok: false; error: ServiceError };
-
-export type ServiceError = {
-  code:
-    | "VALIDATION_ERROR"
-    | "UNAUTHORIZED"
-    | "FORBIDDEN"
-    | "NOT_FOUND"
-    | "CONFLICT"
-    | "INVALID_ACTION"
-    | "EXPIRED"
-    | "INTERNAL_ERROR"
-    | "WEBHOOK_ERROR"
-    | "INVALID_SUBSCRIPTION";
-  message: string;
-};

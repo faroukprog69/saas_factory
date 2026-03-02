@@ -113,6 +113,13 @@ importers:
         version: 5.9.3
 
   packages/audit:
+    dependencies:
+      '@faroukprog69/errors':
+        specifier: workspace:*
+        version: link:../errors
+      '@faroukprog69/types':
+        specifier: workspace:*
+        version: link:../types
     devDependencies:
       drizzle-orm:
         specifier: ^0.45.1
@@ -159,6 +166,12 @@ importers:
 
   packages/billing:
     dependencies:
+      '@faroukprog69/errors':
+        specifier: workspace:*
+        version: link:../errors
+      '@faroukprog69/types':
+        specifier: workspace:*
+        version: link:../types
       stripe:
         specifier: ^20.3.1
         version: 20.3.1(@types/node@25.2.3)
@@ -184,6 +197,12 @@ importers:
 
   packages/db:
     dependencies:
+      '@faroukprog69/errors':
+        specifier: workspace:*
+        version: link:../errors
+      '@faroukprog69/types':
+        specifier: workspace:*
+        version: link:../types
       '@neondatabase/serverless':
         specifier: ^0.10.4
         version: 0.10.4
@@ -313,6 +332,10 @@ importers:
         version: 5.9.3
 
   packages/mail:
+    dependencies:
+      '@faroukprog69/errors':
+        specifier: workspace:*
+        version: link:../errors
     devDependencies:
       '@react-email/render':
         specifier: ^2.0.4
@@ -343,6 +366,10 @@ importers:
         version: 5.9.3
 
   packages/security:
+    dependencies:
+      '@faroukprog69/errors':
+        specifier: workspace:*
+        version: link:../errors
     devDependencies:
       eslint:
         specifier: ^8.57.0
@@ -386,6 +413,12 @@ importers:
 
   packages/teams:
     dependencies:
+      '@faroukprog69/errors':
+        specifier: workspace:*
+        version: link:../errors
+      '@faroukprog69/types':
+        specifier: workspace:*
+        version: link:../types
       crypto:
         specifier: ^1.0.1
         version: 1.0.1
@@ -416,6 +449,10 @@ importers:
         version: 5.9.3
 
   packages/types:
+    dependencies:
+      '@faroukprog69/errors':
+        specifier: workspace:*
+        version: link:../errors
     devDependencies:
       eslint:
         specifier: ^8.57.0
