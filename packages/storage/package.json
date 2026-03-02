@@ -1,0 +1,41 @@
+{
+  "name": "@faroukprog69/storage",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/@faroukprog69"
+  },
+  "scripts": {
+    "dev": "tsup src/index.ts --format cjs,esm --watch --dts --clean",
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean --minify",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "peerDependencies": {
+    "@aws-sdk/client-s3": "^3.500.0",
+    "@aws-sdk/s3-request-presigner": "^3.500.0",
+    "nanoid": "^5.0.0"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-s3": "^3.500.0",
+    "@aws-sdk/s3-request-presigner": "^3.500.0",
+    "nanoid": "^5.0.0",
+    "eslint": "^8.57.0",
+    "tsup": "^8.0.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.5.4"
+  },
+  "packageManager": "pnpm@10.4.1"
+}
