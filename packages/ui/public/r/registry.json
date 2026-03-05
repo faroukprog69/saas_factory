@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "farouk-factory-ui",
+  "homepage": "https://ui.farouk-factory.com",
+  "items": [
+    {
+      "name": "team-switcher",
+      "type": "registry:block",
+      "title": "Team Switcher",
+      "description": "A smart team switcher with workspace support.",
+      "dependencies": ["@hugeicons/react", "@hugeicons/core-free-icons"],
+      "registryDependencies": ["button", "dropdown-menu", "sidebar", "avatar"],
+      "files": [
+        {
+          "path": "registry/base-nova/saas/team-switcher/team-switcher.tsx",
+          "type": "registry:component"
+        }
+      ]
+    }
+  ]
+}

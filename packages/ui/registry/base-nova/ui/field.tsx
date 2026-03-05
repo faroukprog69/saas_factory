@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "@faroukprog69/ui/lib/utils";
+import { cn } from "@/registry/base-nova/lib/utils";
 import { Label } from "@faroukprog69/ui/components/label";
 import { Separator } from "@faroukprog69/ui/components/separator";
 

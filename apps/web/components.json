@@ -5,7 +5,7 @@
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "../../packages/ui/src/styles/globals.css",
+    "css": "../../packages/ui/registry/base-nova/styles/globals.css",
     "baseColor": "neutral",
     "cssVariables": true
   },
@@ -14,10 +14,7 @@
     "components": "@/components",
     "hooks": "@/hooks",
     "lib": "@/lib",
-    "utils": "@faroukprog69/ui/lib/utils",
-    "ui": "@faroukprog69/ui/components"
-  },
-  "menuColor": "default",
-  "menuAccent": "subtle",
-  "registries": {}
+    "utils": "@/registry/base-nova/lib/utils",
+    "ui": "@/registry/base-nova/ui"
+  }
 }

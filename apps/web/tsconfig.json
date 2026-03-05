@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "@faroukprog69/ui/*": ["../../packages/ui/src/*"]
+      "@faroukprog69/ui/*": ["../../packages/ui/*"]
     },
     "plugins": [
       {

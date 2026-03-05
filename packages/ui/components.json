@@ -11,11 +11,11 @@
   },
   "iconLibrary": "hugeicons",
   "aliases": {
-    "components": "@faroukprog69/ui/components",
-    "utils": "@faroukprog69/ui/lib/utils",
-    "hooks": "@faroukprog69/ui/hooks",
-    "lib": "@faroukprog69/ui/lib",
-    "ui": "@faroukprog69/ui/components"
+    "components": "@/registry/base-nova/components",
+    "utils": "@/registry/base-nova/lib/utils",
+    "hooks": "@/registry/base-nova/hooks",
+    "lib": "@/registry/base-nova/lib",
+    "ui": "@/registry/base-nova/ui"
   },
   "menuColor": "default",
   "menuAccent": "subtle",
