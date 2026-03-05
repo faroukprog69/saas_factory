@@ -1,15 +1,10 @@
-# @faroukprog69/types
-
-## 0.0.2
-
-### Patch Changes
-
-- 15fa9b6: Implement global error package and connect it with packages
-- Updated dependencies [a0c2779]
-  - @faroukprog69/errors@0.0.1
+# @faroukprog69/mail
 
 ## 0.0.1
 
 ### Patch Changes
 
-- 5286dab: Initial release
+- e394e36: feat: initial release of mail package
+- 15fa9b6: Implement global error package and connect it with packages
+- Updated dependencies [a0c2779]
+  - @faroukprog69/errors@0.0.1
