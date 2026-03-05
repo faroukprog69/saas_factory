@@ -13,8 +13,6 @@ import {
   teamRoleEnum,
 } from "./schema";
 import { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
-import { ServiceResult, ServiceError } from "@faroukprog69/types";
-
 /* =====================================================
    ENUM TYPES (DB enums → TS unions)
 ===================================================== */

@@ -1,13 +1,13 @@
 // packages/mail/src/index.ts
 import { Resend } from "resend";
 import { render } from "@react-email/render";
-import { ReactElement } from "react";
+import { ReactNode } from "react";
 import { ValidationError } from "@faroukprog69/errors";
 
 export interface SendEmailOptions {
   to: string | string[];
   subject: string;
-  component: ReactElement;
+  component: ReactNode;
 }
 
 export const createMailClient = (config: { apiKey: string; from: string }) => {

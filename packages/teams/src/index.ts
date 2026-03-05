@@ -2,8 +2,10 @@ import { createTeamForUser, deleteTeam, updateTeam } from "./services/team";
 import { addMember, changeRole, removeMember } from "./services/member";
 import { acceptInvite, createInvite, revokeInvite } from "./services/invite";
 import { getTeamsSchema } from "./schema";
-import { DBInstance, ServiceResult, TeamRole } from "./types";
+import { DBInstance, TeamRole } from "./types";
+
 import { InferSelectModel } from "drizzle-orm";
+import { ServiceResult } from "@faroukprog69/types";
 export * from "./permissions";
 
 export type TeamsDeps = {

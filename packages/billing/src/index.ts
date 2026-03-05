@@ -1,4 +1,6 @@
-import type { DBInstance, ServiceResult } from "./types";
+import type { DBInstance } from "./types";
+import type { ServiceResult } from "@faroukprog69/types";
+
 import { getBillingSchema } from "./schema";
 import { createCheckout, createPortal, getSubscription } from "./service";
 import { createStripeInstance } from "./stripe";

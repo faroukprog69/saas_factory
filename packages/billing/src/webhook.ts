@@ -1,7 +1,9 @@
 // packages/billing/src/webhook.ts
 import { Stripe } from "stripe";
 import { eq } from "drizzle-orm";
-import type { DBInstance, ServiceResult } from "./types";
+import type { DBInstance } from "./types";
+import type { ServiceResult } from "@faroukprog69/types";
+import { AppError } from "@faroukprog69/errors";
 
 export async function handleStripeWebhook<
   TFullSchema extends Record<string, unknown> = Record<string, unknown>,
@@ -23,10 +25,10 @@ export async function handleStripeWebhook<
   } catch (err: any) {
     return {
       ok: false,
-      error: {
+      error: new AppError({
         code: "WEBHOOK_ERROR",
         message: `Webhook Error: ${err.message}`,
-      },
+      }),
     };
   }
 
@@ -48,10 +50,10 @@ export async function handleStripeWebhook<
       if (!periodEnd || !priceId) {
         return {
           ok: false,
-          error: {
+          error: new AppError({
             code: "INVALID_SUBSCRIPTION",
             message: "Invalid subscription details",
-          },
+          }),
         };
       }
 

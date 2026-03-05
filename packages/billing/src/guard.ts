@@ -1,4 +1,4 @@
-import type { ServiceResult } from "./types";
+import type { ServiceResult } from "@faroukprog69/types";
 
 export type PlanConfig = {
   name: string;
