@@ -1,5 +1,19 @@
 # web
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [86d3140]
+  - @faroukprog69/billing@0.0.2
+  - @faroukprog69/storage@0.0.2
+  - @faroukprog69/audit@0.0.4
+  - @faroukprog69/flags@0.0.2
+  - @faroukprog69/teams@0.0.4
+  - @faroukprog69/auth@0.0.4
+  - @faroukprog69/db@0.0.5
+  - @faroukprog69/mail@0.0.2
+
 ## 0.0.6
 
 ### Patch Changes

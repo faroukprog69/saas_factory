@@ -1,5 +1,14 @@
 # @faroukprog69/db
 
+## 0.0.5
+
+### Patch Changes
+
+- 86d3140: Add README file to all packages
+- Updated dependencies [86d3140]
+  - @faroukprog69/errors@0.0.2
+  - @faroukprog69/types@0.0.3
+
 ## 0.0.4
 
 ### Patch Changes
