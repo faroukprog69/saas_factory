@@ -1,5 +1,11 @@
 # @faroukprog69/auth
 
+## 0.0.4
+
+### Patch Changes
+
+- 86d3140: Add README file to all packages
+
 ## 0.0.3
 
 ### Patch Changes

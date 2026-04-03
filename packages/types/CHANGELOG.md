@@ -1,5 +1,12 @@
 # @faroukprog69/types
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies [86d3140]
+  - @faroukprog69/errors@0.0.2
+
 ## 0.0.2
 
 ### Patch Changes
