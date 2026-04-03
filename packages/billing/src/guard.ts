@@ -20,15 +20,21 @@ export function checkEntitlement(
     };
   }
 
-  const plan = Object.values(plansConfig).find(
-    (p) => p.name.toLowerCase() === subscription.priceId?.toLowerCase(),
-  );
+  // ✅ Single source of truth: direct lookup by priceId
+  const plan = plansConfig[subscription.priceId];
 
-  const hasFeature =
-    plansConfig[subscription.priceId]?.features.includes(featureName);
+  if (!plan) {
+    return {
+      ok: true,
+      data: false,
+    };
+  }
+
+  // ✅ Safe feature check
+  const hasFeature = plan.features?.includes(featureName) ?? false;
 
   return {
     ok: true,
-    data: !!hasFeature,
+    data: hasFeature,
   };
 }

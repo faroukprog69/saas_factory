@@ -3,7 +3,7 @@ import { pgTable, text, timestamp, pgEnum, boolean } from "drizzle-orm/pg-core";
 
 export const subscriptionStatusEnum = pgEnum("subscription_status", [
   "active",
-  "trailing",
+  "trialing",
   "past_due",
   "canceled",
   "unpaid",
@@ -57,6 +57,12 @@ export function subscription(targetTable: any) {
 
 export function getBillingSchema(targetTable: any) {
   const subscriptionTable = subscription(targetTable);
+  const webhookEventTable = pgTable("webhook_event", {
+    id: text("id").primaryKey(),
+    type: text("type").notNull(),
+    processed: boolean("processed").default(false),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  });
   const subscriptionRelationsTable = subscriptionRelations(
     subscriptionTable,
     targetTable,
@@ -64,6 +70,7 @@ export function getBillingSchema(targetTable: any) {
   const targetRelationsTable = targetRelations(targetTable, subscriptionTable);
   return {
     subscription: subscriptionTable,
+    webhookEvent: webhookEventTable,
     subscriptionRelations: subscriptionRelationsTable,
     targetRelations: targetRelationsTable,
   };

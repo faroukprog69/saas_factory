@@ -13,11 +13,12 @@ export class RBACPolicy implements Policy {
     const permissions = this.rolePermissions[role] || [];
 
     if (permissions.includes(action)) {
-      return { allowed: true };
+      return { allowed: true, policyName: this.name };
     }
 
     return {
       allowed: false,
+      policyName: this.name,
       reason: `Role '${role}' does not have permission for '${action}'`,
     };
   }

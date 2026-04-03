@@ -1,107 +1,188 @@
 # @faroukprog69/teams
 
-A robust, enterprise-ready Team Management library built with **Drizzle ORM** and **PostgreSQL**. This package handles the complexities of multi-tenancy, member roles (RBAC), and invitation workflows.
+Full team management service for SaaS apps — handles team CRUD, member roles, and email invites with built-in permission enforcement and audit logging.
 
-## Features
+---
 
-- **Dynamic Schema Injection**: Inject your existing User schema to create seamless foreign key relationships.
-- **Role-Based Access Control (RBAC)**: Built-in permission logic for `Owner`, `Admin`, `Member`, and `Viewer`.
-- **Atomic Transactions**: Powered by PostgreSQL transactions to ensure data integrity (e.g., creating a team and its first member simultaneously).
-- **Audit-Ready**: Requires a `logAudit` dependency to track every administrative action.
-- **Invitation System**: Secure token-based invites with expiration and revocation logic.
-- **Slug Management**: Automatic URL-friendly slug generation with conflict handling.
+## Why This Exists
+
+Every multi-tenant SaaS needs the same team primitives: create a team, invite members by email, manage roles, enforce who can do what. This package ships all of that as a single typed service factory that plugs into your existing Drizzle DB instance and audit logger — no coupling to a specific HTTP framework or auth system.
+
+Use it when:
+
+- You need teams with role-based access control (`owner → admin → member → viewer`)
+- You want invite-by-email with token expiry and revocation
+- You need all actions audit-logged consistently
 
 ---
 
 ## Installation
 
 ```bash
-pnpm add @faroukprog69/teams
+pnpm add @faroukprog69/teams drizzle-orm
 ```
 
-> **Note:** This package requires **WebSockets** support for transactions. Ensure you use `@neondatabase/serverless` with the `Pool` client and `ws` configured.
-
 ---
 
-## Database Architecture
-
-The package manages three core tables:
-
-1. **Team**: Stores team metadata (Name, Slug, Plan, Status).
-2. **Team Member**: Pivot table linking Users to Teams with specific roles.
-3. **Team Invite**: Handles pending invitations and joining tokens.
-
----
-
-## Usage
-
-### 1. Initialize Teams Service & Schema
-
-The service acts as the factory. By initializing it with your `user` schema and database instance, it generates the corresponding team schemas automatically.
+## Quick Start
 
 ```typescript
+// lib/teams.ts
 import { createTeams } from "@faroukprog69/teams";
-import { authSchema } from "@faroukprog69/auth/schema";
-import { db } from "./db";
-import { logAudit } from "./audit";
+import { getTeamsSchema } from "@faroukprog69/teams/schema";
+import { db } from "./db"; // your @faroukprog69/db instance
+import { user } from "./auth-schema"; // your Better Auth user table
 
-// 1. Initialize the service
-// Passing your user table ensures foreign key integrity
-export const teams = createTeams(authSchema.user, {
-  db: db,
-  logAudit: logAudit,
+export const teams = createTeams(user, {
+  db,
+  logAudit: async (params) => {
+    // plug in your audit logger or a no-op
+    console.log("[audit]", params);
+  },
 });
 
-// 2. Export the generated schema for Drizzle migrations/queries
-export const teamsSchema = teams.schema;
+// Merge teams schema into your full DB schema
+export const teamsSchema = teamsService.schema;
 ```
-
-### 2. Register with Drizzle
-
-To make Drizzle aware of the new tables, combine the generated `teamsSchema` into your main schema object:
 
 ```typescript
-export const schema = {
-  ...authSchema,
-  ...teamsSchema,
-};
+// Usage anywhere in your app
+const result = await teams.createTeamForUser(userId, "Acme Corp");
+
+if (result.ok) {
+  console.log(result.data.slug); // "acme-corp-x7k2"
+} else {
+  console.error(result.error.code); // "VALIDATION_ERROR" | "INTERNAL_ERROR" | ...
+}
 ```
 
 ---
 
-## API Reference
+## Core Concepts
 
-All service methods return a consistent `ServiceResult<T>` object:
-`{ ok: true, data: T }` OR `{ ok: false, error: { code: string, message: string } }`
+**`createTeams(userSchema, deps)`** — the main factory. Takes your user table and dependencies, returns a fully bound `TeamsService` object. All internal schema wiring happens here — you never import individual service functions directly.
 
-### Team Management
+**Schema is dynamic** — `getTeamsSchema(user)` generates the `team`, `teamMember`, and `teamInvite` Drizzle tables at runtime, referencing your user table's primary key. This keeps the package decoupled from your auth setup.
 
-- `createTeamForUser(userId, name)`: Creates a team and assigns the user as the `owner`.
-- `updateTeam(teamId, userId, updates)`: Updates team details (Owner only).
-- `deleteTeam(userId, teamId)`: Permanently removes a team and all associated data.
+**Role hierarchy** — four roles with enforced power levels:
 
-### Membership Management
+```
+owner (3) > admin (2) > member (1) > viewer (0)
+```
 
-- `addMember(teamId, userId, currentUserId, role)`: Directly adds a user to a team.
-- `changeRole(teamId, userId, currentUserId, role)`: Updates an existing member's role.
-- `removeMember(teamId, userId, currentUserId)`: Removes a user from the team.
+An actor can only assign or modify roles strictly below their own level — except the primary owner, who has unrestricted control.
 
-### Invitation Workflow
+**`ServiceResult<T>`** — every method returns `{ ok: true, data: T } | { ok: false, error: AppError }`. No throws, no uncaught promises.
 
-- `createInvite(teamId, currentUserId, email, role)`: Generates a secure invite token.
-- `acceptInvite(token, userId)`: Validates token and joins the user to the team.
-- `revokeInvite(teamId, currentUserId, inviteId)`: Cancels a pending invitation.
+**Audit log** — every mutating action calls `logAudit` with a structured payload. You supply the implementation.
 
 ---
 
-## Permission Matrix
+## API Overview
 
-| Action          | Owner | Admin | Member | Viewer |
-| --------------- | ----- | ----- | ------ | ------ |
-| Delete Team     | ✅    | ❌    | ❌     | ❌     |
-| Invite Members  | ✅    | ✅    | ❌     | ❌     |
-| Change Roles    | ✅    | ✅\*  | ❌     | ❌     |
-| Update Settings | ✅    | ✅    | ❌     | ❌     |
-| View Team Data  | ✅    | ✅    | ✅     | ✅     |
+All methods are on the object returned by `createTeams()`.
 
-\*_Admins cannot modify Owners or assign roles higher than their own._
+### Team
+
+| Method                                       | Description                                                                                        |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `createTeamForUser(userId, name)`            | Creates a team and makes the user the owner. Auto-generates a unique slug with retry on collision. |
+| `updateTeam(teamId, currentUserId, updates)` | Updates team fields. Owner-only. `id`, `ownerId`, `slug`, timestamps are immutable.                |
+| `deleteTeam(currentUserId, teamId)`          | Hard deletes team and all members. Primary owner only.                                             |
+
+### Members
+
+| Method                                            | Description                                                                     |
+| ------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `addMember(teamId, userId, currentUserId, role)`  | Directly adds a user. Checks for pending invites to avoid conflicts.            |
+| `changeRole(teamId, userId, currentUserId, role)` | Changes a member's role. Cannot self-modify. Role hierarchy enforced.           |
+| `removeMember(teamId, userId, currentUserId)`     | Removes a member. Cannot remove yourself, the primary owner, or the last owner. |
+
+### Invites
+
+| Method                                             | Description                                                              |
+| -------------------------------------------------- | ------------------------------------------------------------------------ |
+| `createInvite(teamId, currentUserId, email, role)` | Creates a 24-hour invite token for an email. Prevents duplicate invites. |
+| `acceptInvite(token, userId)`                      | Validates token (not expired, not used/revoked) and adds user as member. |
+| `revokeInvite(teamId, currentUserId, inviteId)`    | Cancels a pending invite. Admin/owner only.                              |
+
+### Schema
+
+```typescript
+teams.schema; // { team, teamMember, teamInvite, teamRelations, ... }
+```
+
+Spread into your full Drizzle schema for migrations and `db.query.*` relational support.
+
+---
+
+## Example Use Case
+
+**Full invite flow: send → accept**
+
+```typescript
+// 1. Owner invites a user by email
+const invite = await teams.createInvite(
+  teamId,
+  ownerUserId,
+  "dev@example.com",
+  "member",
+);
+// invite.data.token → send this via email
+
+// 2. User clicks the link, your handler calls:
+const result = await teams.acceptInvite(token, newUserId);
+
+if (result.ok) {
+  // result.data = new teamMember row
+  redirect(`/teams/${teamId}/dashboard`);
+}
+```
+
+**Role change with permission enforcement**
+
+```typescript
+const result = await teams.changeRole(
+  teamId,
+  targetUserId,
+  adminUserId,
+  "viewer",
+);
+
+if (!result.ok) {
+  // result.error.code === "INVALID_ACTION" → tried to assign equal/higher role
+  // result.error.code === "UNAUTHORIZED"   → not an admin/owner
+}
+```
+
+---
+
+## Folder Structure
+
+```
+src/
+├── index.ts          # createTeams factory + TeamsService type
+├── schema.ts         # getTeamsSchema() — dynamic Drizzle table definitions
+├── permissions.ts    # Permissions object — all role enforcement logic
+├── helpers.ts        # getMembershipWithTeam(), generateTeamSlug(), slugify()
+├── types.ts          # TeamRole, TeamStatus, DBInstance
+└── services/
+    ├── team.ts       # createTeamForUser, updateTeam, deleteTeam
+    ├── member.ts     # addMember, changeRole, removeMember
+    └── invite.ts     # createInvite, acceptInvite, revokeInvite
+```
+
+Two export paths:
+
+- `@faroukprog69/teams` → service factory + permissions + types
+- `@faroukprog69/teams/schema` → Drizzle schema for migrations
+
+---
+
+## Notes
+
+- **All mutations run inside transactions.** If any step fails (e.g. audit log), the whole operation rolls back.
+- **Schema is injected, not imported.** `getTeamsSchema(user)` requires your user table at runtime. This means you must run migrations after calling it — never hardcode the output.
+- **`Permissions` is exported.** Use it directly if you need permission checks outside the service (e.g. in middleware or UI guards).
+- **Slug collision is handled.** `createTeamForUser` retries up to 5 times on unique constraint violations (`pg error 23505`) before failing.
+- **Invites expire in 24 hours** and are single-use. Accepting or revoking sets `acceptedAt`/`revokedAt` — the token cannot be reused.

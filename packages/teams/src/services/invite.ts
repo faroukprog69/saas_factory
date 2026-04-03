@@ -171,6 +171,8 @@ export async function acceptInvite<
     };
   }
 
+  const VALID_ROLES = ["owner", "admin", "member", "viewer"] as const;
+
   return db.transaction(async (tx: any) => {
     const invite = await tx.query.teamInvite.findFirst({
       where: eq(teamInvite.token, token),
@@ -179,7 +181,10 @@ export async function acceptInvite<
     if (!invite) {
       return {
         ok: false,
-        error: new AppError({ code: "NOT_FOUND", message: "Invite not found" }),
+        error: new AppError({
+          code: "NOT_FOUND",
+          message: "Invite not found",
+        }),
       };
     }
 
@@ -196,7 +201,20 @@ export async function acceptInvite<
     if (invite.expiresAt.getTime() < Date.now()) {
       return {
         ok: false,
-        error: new AppError({ code: "EXPIRED", message: "Invite has expired" }),
+        error: new AppError({
+          code: "EXPIRED",
+          message: "Invite has expired",
+        }),
+      };
+    }
+
+    if (!VALID_ROLES.includes(invite.role)) {
+      return {
+        ok: false,
+        error: new AppError({
+          code: "INVALID_ACTION",
+          message: "Invalid role",
+        }),
       };
     }
 
@@ -237,24 +255,13 @@ export async function acceptInvite<
       };
     }
 
-    if (!["owner", "admin", "member", "viewer"].includes(invite.role)) {
-      return {
-        ok: false,
-        error: new AppError({
-          code: "INVALID_ACTION",
-          message: "Invalid role",
-        }),
-      };
-    }
-
-    // تحديث الدعوة: تم القبول
     const [updatedInvite] = await tx
       .update(teamInvite)
       .set({ acceptedAt: new Date(), acceptedBy: userId })
       .where(eq(teamInvite.id, invite.id))
       .returning();
 
-    if (!updatedInvite)
+    if (!updatedInvite) {
       return {
         ok: false,
         error: new AppError({
@@ -262,6 +269,7 @@ export async function acceptInvite<
           message: "Failed to update invite",
         }),
       };
+    }
 
     await auditLog({
       actorId: userId,

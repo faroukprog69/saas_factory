@@ -4,7 +4,11 @@ import { AuthContext, Decision, Action } from "./context";
 export interface Policy {
   name: string;
   priority: number;
-  check(ctx: AuthContext, action: Action, resource?: any): Promise<Decision>;
+  check(
+    ctx: AuthContext,
+    action: Action,
+    resource?: any,
+  ): Promise<Decision> | Decision;
 }
 
 type DecisionHook = (
@@ -15,7 +19,7 @@ type DecisionHook = (
 
 export class SecurityEngine {
   private policies: Policy[] = [];
-  private onDecisionHook?: DecisionHook;
+  private onDecisionHooks: DecisionHook[] = [];
 
   use(policy: Policy): this {
     this.policies.push(policy);
@@ -24,7 +28,7 @@ export class SecurityEngine {
   }
 
   onDecision(hook: DecisionHook) {
-    this.onDecisionHook = hook;
+    this.onDecisionHooks.push(hook);
   }
 
   async can(
@@ -35,15 +39,36 @@ export class SecurityEngine {
     let finalDecision: Decision = { allowed: true };
 
     for (const policy of this.policies) {
-      const decision = await policy.check(ctx, action, resource);
-      if (!decision.allowed) {
+      const decision = await Promise.resolve(
+        policy.check(ctx, action, resource),
+      );
+
+      // Allow short-circuit
+      if (decision.allowed && decision.final) {
         finalDecision = { ...decision, policyName: policy.name };
         break;
       }
+
+      if (!decision.allowed) {
+        finalDecision = { ...decision, policyName: policy.name };
+        break; // deny short-circuit
+      }
     }
 
-    this.onDecisionHook?.(finalDecision, ctx, action);
+    this.onDecisionHooks.forEach((hook) => hook(finalDecision, ctx, action));
 
     return finalDecision;
+  }
+
+  /**
+   * Inverse helper: checks if action is not allowed
+   */
+  async cannot(
+    ctx: AuthContext,
+    action: Action,
+    resource?: any,
+  ): Promise<boolean> {
+    const decision = await this.can(ctx, action, resource);
+    return !decision.allowed;
   }
 }

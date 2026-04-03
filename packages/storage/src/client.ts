@@ -1,3 +1,4 @@
+// packages/storage/src/client.ts
 import {
   S3Client,
   PutObjectCommand,
@@ -35,18 +36,23 @@ export class StorageClient {
     this.publicUrl = config.publicUrl;
   }
 
+  /**
+   * Generate a unique storage key for a file, optionally in a folder
+   */
   generateKey(fileName: string, folder?: string): string {
-    const extension = fileName.split(".").pop();
+    const extension = fileName.split(".").pop() ?? "";
     const id = nanoid(12);
-    const key = folder ? `${folder}/${id}.${extension}` : `${id}.${extension}`;
-    return key;
+    return folder ? `${folder}/${id}.${extension}` : `${id}.${extension}`;
   }
 
   /**
-   * إنشاء رابط موقع للرفع (Presigned Put URL)
-   * يستخدم لإرسال الملف مباشرة من المتصفح إلى السحابة
+   * Generate a presigned URL for uploading a file
    */
-  async getUploadUrl(key: string, contentType: string, expiresIn = 3600) {
+  async getUploadUrl(
+    key: string,
+    contentType: string,
+    expiresIn = 3600,
+  ): Promise<{ url: string; key: string }> {
     const command = new PutObjectCommand({
       Bucket: this.bucket,
       Key: key,
@@ -58,10 +64,9 @@ export class StorageClient {
   }
 
   /**
-   * إنشاء رابط موقع للقراءة (Presigned Get URL)
-   * مفيد للملفات الخاصة التي لا تريد جعلها عامة للجميع
+   * Generate a presigned URL for downloading a file
    */
-  async getDownloadUrl(key: string, expiresIn = 3600) {
+  async getDownloadUrl(key: string, expiresIn = 3600): Promise<string> {
     const command = new GetObjectCommand({
       Bucket: this.bucket,
       Key: key,
@@ -71,8 +76,7 @@ export class StorageClient {
   }
 
   /**
-   * الحصول على الرابط العام للملف
-   * إذا كان لديك Public URL (CDN)، سيقوم بدمجه مع الكي
+   * Get the public URL for a file, if publicUrl is configured
    */
   getFileUrl(key: string): string {
     if (this.publicUrl) {
@@ -81,19 +85,18 @@ export class StorageClient {
         : this.publicUrl;
       return `${baseUrl}/${key}`;
     }
-    // إذا لم يوجد رابط عام، نستخدم الرابط الافتراضي للمزود
-    return `${this.bucket}.${key}`;
+    // Fallback: default S3-style URL (may not be accessible publicly)
+    return `https://${this.bucket}.s3.${this.client.config.region}.amazonaws.com/${key}`;
   }
 
   /**
-   * حذف ملف من السحابة
+   * Delete a file from storage
    */
   async deleteFile(key: string) {
     const command = new DeleteObjectCommand({
       Bucket: this.bucket,
       Key: key,
     });
-
     return await this.client.send(command);
   }
 }

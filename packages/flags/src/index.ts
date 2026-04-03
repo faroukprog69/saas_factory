@@ -43,7 +43,7 @@ export const createFlagClient = (config: FlagClientConfig) => {
  * وظيفة داخلية لجلب البيانات من الـ DB وتشغيل المحرك
  */
 async function evaluateFlag(db: any, key: string, context: FlagContext) {
-  // 1. جلب الـ Flag والـ Override في وقت واحد لتقليل الطلبات
+  // 1. جلب الـ Flag
   const [flag] = await db
     .select()
     .from(featureFlags)
@@ -54,8 +54,8 @@ async function evaluateFlag(db: any, key: string, context: FlagContext) {
 
   // 2. البحث عن Overrides لهذا الـ Flag
   let overrideValue: string | undefined;
-
   const conditions = [];
+
   if (context.userId) {
     conditions.push(
       and(
@@ -64,6 +64,7 @@ async function evaluateFlag(db: any, key: string, context: FlagContext) {
       ),
     );
   }
+
   if (context.teamId) {
     conditions.push(
       and(

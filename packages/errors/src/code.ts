@@ -21,4 +21,6 @@ export const ErrorCodes = {
   INVALID_SUBSCRIPTION: "INVALID_SUBSCRIPTION",
 } as const;
 
-export type ErrorCode = keyof typeof ErrorCodes;
+export type ErrorDetails = Record<string, unknown>;
+
+export type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes];

@@ -37,7 +37,7 @@ export class FlagEngine {
 
     // أولوية 2: فحص المستخدمين المحددين (Whitelist)
     if (context.userId && rules.users?.includes(context.userId)) {
-      return this.parseValue("true", flag.type); // أو القيمة المخصصة
+      return this.parseValue("true", flag.type);
     }
 
     // أولوية 3: فحص الأدوار (Roles)
@@ -52,9 +52,7 @@ export class FlagEngine {
       rules.plans[context.planId] !== undefined
     ) {
       const planValue = rules.plans[context.planId];
-      // إذا كان boolean
       if (typeof planValue === "boolean") return planValue;
-      // إذا كان numeric (Limit)
       return planValue;
     }
 

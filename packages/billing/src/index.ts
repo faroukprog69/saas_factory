@@ -87,6 +87,7 @@ export function createBilling(deps: BillingDeps): BillingService {
         webhookSecret,
         db: deps.db,
         subscriptionTable: schema.subscription,
+        webhookEventTable: schema.webhookEvent,
       });
     },
   };

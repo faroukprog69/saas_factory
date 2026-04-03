@@ -10,13 +10,27 @@ import { SecurityEngine } from "./engine";
 import { createGuard } from "./guard";
 import { RBACPolicy } from "./policies/rbac";
 import { OwnershipPolicy } from "./policies/ownership";
+import { BillingPolicy } from "./policies/billing";
 
-export function setupSecurity(roleRules: Record<string, string[]>) {
+/**
+ * Setup security engine with default policies.
+ * @param roleRules Role → permissions mapping
+ * @param extraPolicies Optional additional policies (e.g., BillingPolicy)
+ */
+export function setupSecurity(
+  roleRules: Record<string, string[]>,
+  extraPolicies: Array<
+    InstanceType<
+      typeof RBACPolicy | typeof OwnershipPolicy | typeof BillingPolicy
+    >
+  > = [],
+) {
   const engine = new SecurityEngine()
     .use(new RBACPolicy(roleRules))
     .use(new OwnershipPolicy());
 
-  const protect = createGuard(engine);
+  extraPolicies.forEach((policy) => engine.use(policy));
 
+  const protect = createGuard(engine);
   return { engine, protect };
 }
